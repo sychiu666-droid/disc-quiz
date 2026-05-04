@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISC 動物人格測驗</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .container {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-width: 660px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* ── WELCOME ── */
+  #screen-welcome { padding: 48px 40px; text-align: center; }
+
+  .logo { font-size: 64px; margin-bottom: 12px; animation: float 3s ease-in-out infinite; }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  h1 { font-size: 2rem; font-weight: 900; color: #1a202c; margin-bottom: 8px; }
+  .subtitle { font-size: 1rem; color: #718096; margin-bottom: 32px; line-height: 1.7; }
+
+  .animals-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .a-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .a-chip .icon { font-size: 2rem; }
+  .chip-d { background: #fff0f0; color: #c53030; }
+  .chip-i { background: #fff8e6; color: #b7791f; }
+  .chip-s { background: #f0fff4; color: #276749; }
+  .chip-c { background: #ebf8ff; color: #2c5282; }
+
+  .info-box {
+    background: #f7f8ff;
+    border: 1.5px solid #e0e5ff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 0.88rem;
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .info-box strong { color: #5a67d8; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 16px 52px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102,126,234,0.5); }
+
+  /* ── QUIZ ── */
+  #screen-quiz { display: none; }
+
+  .quiz-top {
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid #e8ecf4;
+    background: #fafbff;
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .q-label { font-size: 0.82rem; font-weight: 700; color: #718096; }
+  .q-num   { font-size: 0.82rem; font-weight: 700; color: #667eea; }
+
+  .progress-bar { background: #e2e8f0; border-radius: 999px; height: 7px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+
+  .quiz-body { padding: 28px; }
+
+  .q-prompt {
+    font-size: 0.82rem;
+    color: #a0aec0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .q-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #2d3748;
+    margin-bottom: 22px;
+    line-height: 1.4;
+  }
+
+  /* ── 詞語題 2×2 ── */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .opt-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 14px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 88px;
+    justify-content: center;
+  }
+  .opt-card:hover { border-color:#667eea; background:#f7f8ff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(102,126,234,0.15); }
+  .opt-card.selected { border-color:#5a67d8; background:linear-gradient(135deg,#eef2ff,#f5f0ff); box-shadow:0 0 0 3px rgba(102,126,234,0.15); }
+  .opt-card.selected .opt-letter { background:#5a67d8; color:white; }
+
+  .opt-letter {
+    width:28px; height:28px; border-radius:50%;
+    background:#edf2f7; color:#4a5568;
+    font-size:0.78rem; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:all 0.15s;
+  }
+  .opt-word { font-size:1rem; font-weight:700; color:#2d3748; line-height:1.3; }
+
+  /* ── 情境題 vertical ── */
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .opt-row:hover { border-color:#667eea; background:#f7f8ff; transform:translateX(4px); }
+  .opt-row.selected { border-color:#5a67d8; background:linear-gradient(135deg,#eef2ff,#f5f0ff); box-shadow:0 0 0 3px rgba(102,126,234,0.12); }
+  .opt-row.selected .opt-letter { background:#5a67d8; color:white; }
+
+  .opt-icon-box {
+    width:38px; height:38px; border-radius:10px;
+    background:#f0f2ff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; flex-shrink:0;
+  }
+  .opt-sentence { font-size:0.95rem; font-weight:600; color:#2d3748; line-height:1.4; }
+
+  .btn-next {
+    display:block; width:100%; margin-top:24px; padding:14px;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white; border:none; border-radius:14px;
+    font-size:1rem; font-weight:800; cursor:pointer;
+    transition:all 0.15s; opacity:0.4; pointer-events:none;
+  }
+  .btn-next.active { opacity:1; pointer-events:all; }
+  .btn-next.active:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(102,126,234,0.4); }
+
+  /* ── RESULT ── */
+  #screen-result { display:none; }
+
+  .result-header {
+    padding: 36px 32px 32px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-header::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 70%);
+  }
+  .r-badge {
+    display:inline-block;
+    background:rgba(255,255,255,0.22);
+    backdrop-filter:blur(4px);
+    padding:5px 18px; border-radius:50px;
+    font-size:0.78rem; font-weight:800; letter-spacing:2px;
+    margin-bottom:10px; position:relative; z-index:1;
+  }
+  .r-animal {
+    display:flex; align-items:center; justify-content:center;
+    margin:4px auto 8px; position:relative; z-index:1;
+    filter:drop-shadow(0 6px 18px rgba(0,0,0,0.28));
+  }
+  .r-animal svg { width:150px; height:150px; }
+  .r-name { font-size:2.2rem; font-weight:900; margin-bottom:5px; position:relative; z-index:1; }
+  .r-line { font-size:1rem; opacity:0.9; position:relative; z-index:1; }
+
+  .result-body { padding:28px 28px 36px; }
+
+  .section { margin-bottom:24px; }
+  .section-title {
+    font-size:0.78rem; font-weight:800; color:#a0aec0;
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:14px;
+  }
+
+  /* Scores */
+  .score-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .score-lbl { width:80px; font-size:0.82rem; font-weight:700; color:#4a5568; flex-shrink:0; }
+  .score-track { flex:1; background:#e8ecf4; border-radius:999px; height:10px; overflow:hidden; }
+  .score-bar { height:100%; border-radius:999px; width:0; transition:width 1.1s cubic-bezier(.25,.8,.25,1) 0.2s; }
+  .bar-d { background:linear-gradient(90deg,#fc8181,#e53e3e); }
+  .bar-i { background:linear-gradient(90deg,#f6e05e,#d69e2e); }
+  .bar-s { background:linear-gradient(90deg,#68d391,#38a169); }
+  .bar-c { background:linear-gradient(90deg,#63b3ed,#3182ce); }
+  .score-val { width:32px; text-align:right; font-size:0.82rem; font-weight:800; color:#4a5568; }
+
+  /* Traits */
+  .traits-wrap { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .trait-pill {
+    display:flex; align-items:center; gap:6px;
+    padding:9px 12px; background:#f7fafc; border-radius:10px;
+    font-size:0.83rem; font-weight:700; color:#4a5568;
+  }
+
+  /* Desc */
+  .desc-card {
+    background:#f7fafc; border-radius:16px;
+    padding:18px 20px; font-size:0.93rem; color:#4a5568;
+    line-height:1.75; white-space:pre-line;
+  }
+
+  /* Career section */
+  .career-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .career-card {
+    border-radius:14px; padding:14px 16px;
+    font-size:0.88rem; color:#4a5568; line-height:1.6;
+  }
+  .career-card-title {
+    font-size:0.75rem; font-weight:800; text-transform:uppercase;
+    letter-spacing:1px; margin-bottom:8px;
+  }
+  .career-tag {
+    display:inline-block;
+    padding:4px 10px; border-radius:20px;
+    font-size:0.78rem; font-weight:700;
+    margin:3px 3px 3px 0;
+  }
+
+  /* Tip */
+  .tip-card {
+    border-radius:14px; padding:16px 18px;
+    font-size:0.9rem; color:#4a5568; line-height:1.65;
+    border-left:4px solid;
+  }
+  .tip-head { font-weight:800; margin-bottom:5px; }
+
+  .btn-again {
+    display:block; width:100%; padding:14px;
+    background:#edf2f7; color:#4a5568; border:none;
+    border-radius:14px; font-size:0.97rem; font-weight:800;
+    cursor:pointer; transition:background 0.15s; margin-top:8px;
+  }
+  .btn-again:hover { background:#e2e8f0; }
+
+  @media (max-width:480px) {
+    #screen-welcome { padding:36px 22px; }
+    .quiz-body { padding:20px; }
+    .result-body { padding:20px 20px 32px; }
+    h1 { font-size:1.65rem; }
+    .traits-wrap { grid-template-columns:1fr 1fr; }
+    .options-grid { grid-template-columns:1fr 1fr; }
+    .opt-card { padding:14px 10px; min-height:76px; }
+    .opt-word { font-size:0.92rem; }
+    .career-grid { grid-template-columns:1fr; }
+    .r-animal svg { width:120px; height:120px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ── WELCOME ── -->
+  <div id="screen-welcome">
+    <div class="logo">🐾</div>
+    <h1>你是什麼動物？</h1>
+    <p class="subtitle">透過 30 道題目，探索你的 DISC 人格類型<br>看看你最像哪一種動物！</p>
+    <div class="animals-row">
+      <div class="a-chip chip-d"><span class="icon">🐯</span>老虎 D型</div>
+      <div class="a-chip chip-i"><span class="icon">🦚</span>孔雀 I型</div>
+      <div class="a-chip chip-s"><span class="icon">🐨</span>無尾熊 S型</div>
+      <div class="a-chip chip-c"><span class="icon">🦉</span>貓頭鷹 C型</div>
+    </div>
+    <div class="info-box">
+      📝 共 <strong>30 題</strong>，包含<strong>詞語選擇</strong>與<strong>情境題</strong>兩種形式。<br>
+      每題選出最符合你的答案，憑直覺選就好！
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">開始測驗 →</button>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div id="screen-quiz">
+    <div class="quiz-top">
+      <div class="q-meta">
+        <span class="q-label" id="q-label">選出最符合你的詞語</span>
+        <span class="q-num"   id="q-num">1 / 30</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="quiz-body">
+      <div class="q-prompt">第 <span id="q-idx">1</span> 題</div>
+      <div class="q-title" id="q-title">以下哪個詞語，最能描述你？</div>
+      <div id="opts"></div>
+      <button class="btn-next" id="btn-next" onclick="next()">下一題 →</button>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="screen-result">
+    <div class="result-header" id="r-header">
+      <div class="r-badge" id="r-badge"></div>
+      <div class="r-animal" id="r-emoji"></div>
+      <div class="r-name"  id="r-name"></div>
+      <div class="r-line"  id="r-line"></div>
+    </div>
+    <div class="result-body">
+
+      <div class="section">
+        <div class="section-title">📊 四個維度得分</div>
+        <div class="score-row">
+          <span class="score-lbl">🐯 D 支配</span>
+          <div class="score-track"><div class="score-bar bar-d" id="bar-d"></div></div>
+          <span class="score-val" id="val-d">0</span>
+        </div>
+        <div class="score-row">
+          <span class="score-lbl">🦚 I 影響</span>
+          <div class="score-track"><div class="score-bar bar-i" id="bar-i"></div></div>
+          <span class="score-val" id="val-i">0</span>
+        </div>
+        <div class="score-row">
+          <span class="score-lbl">🐨 S 穩健</span>
+          <div class="score-track"><div class="score-bar bar-s" id="bar-s"></div></div>
+          <span class="score-val" id="val-s">0</span>
+        </div>
+        <div class="score-row">
+          <span class="score-lbl">🦉 C 分析</span>
+          <div class="score-track"><div class="score-bar bar-c" id="bar-c"></div></div>
+          <span class="score-val" id="val-c">0</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">✨ 你的核心特質</div>
+        <div class="traits-wrap" id="traits"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📖 個性說明</div>
+        <div class="desc-card" id="r-desc"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🚀 創業 ＆ 團隊職位分析</div>
+        <div class="career-grid" id="r-career"></div>
+      </div>
+
+      <div class="section">
+        <div class="tip-card" id="r-tip">
+          <div class="tip-head" id="r-tip-head"></div>
+          <div id="r-tip-body"></div>
+        </div>
+      </div>
+
+      <button class="btn-again" onclick="restart()">🔄 再測一次</button>
+    </div>
+  </div>
+
+</div>
+<script>
+// ── SVG 插畫（吉卜力風格：漸層＋有機曲線＋暖色調）──────────
+const SVGs = {
+
+D: `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="tg-f" cx="45%" cy="36%" r="62%">
+    <stop offset="0%" stop-color="#ECA832"/><stop offset="100%" stop-color="#A86018"/>
+  </radialGradient>
+  <radialGradient id="tg-i" cx="34%" cy="30%" r="62%">
+    <stop offset="0%" stop-color="#C88A08"/><stop offset="100%" stop-color="#784600"/>
+  </radialGradient>
+</defs>
+<path d="M34 56 Q22 16 50 22 Q58 40 46 58Z" fill="#C07818"/>
+<path d="M37 54 Q28 24 48 28 Q52 42 44 56Z" fill="#EDAAB2"/>
+<path d="M126 56 Q138 16 110 22 Q102 40 114 58Z" fill="#C07818"/>
+<path d="M123 54 Q132 24 112 28 Q108 42 116 56Z" fill="#EDAAB2"/>
+<ellipse cx="80" cy="94" rx="58" ry="57" fill="url(#tg-f)"/>
+<ellipse cx="80" cy="112" rx="34" ry="25" fill="#FFF2D8"/>
+<path d="M68 58 C70 46 72 45 74 58" fill="#9A6010" opacity="0.42"/>
+<path d="M78 56 C79 46 81 45 82 56" fill="#9A6010" opacity="0.42"/>
+<path d="M86 58 C88 45 90 46 92 58" fill="#9A6010" opacity="0.42"/>
+<path d="M46 74 Q62 67 74 72" stroke="#9A6010" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/>
+<path d="M86 72 Q98 67 114 74" stroke="#9A6010" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/>
+<ellipse cx="62" cy="88" rx="19" ry="20" fill="white"/>
+<ellipse cx="62" cy="89" rx="13" ry="14" fill="url(#tg-i)"/>
+<ellipse cx="62" cy="90" rx="7.5" ry="9.5" fill="#140400"/>
+<ellipse cx="54" cy="82" rx="7.5" ry="5.5" fill="white" opacity="0.92"/>
+<ellipse cx="98" cy="88" rx="19" ry="20" fill="white"/>
+<ellipse cx="98" cy="89" rx="13" ry="14" fill="url(#tg-i)"/>
+<ellipse cx="98" cy="90" rx="7.5" ry="9.5" fill="#140400"/>
+<ellipse cx="90" cy="82" rx="7.5" ry="5.5" fill="white" opacity="0.92"/>
+<ellipse cx="42" cy="107" rx="13" ry="9" fill="#E07060" opacity="0.18"/>
+<ellipse cx="118" cy="107" rx="13" ry="9" fill="#E07060" opacity="0.18"/>
+<path d="M75 113 Q80 107 85 113 Q80 120 75 113Z" fill="#B04800"/>
+<path d="M73 122 Q80 128 87 122" stroke="#964000" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<line x1="80" y1="119" x2="80" y2="123" stroke="#964000" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="26" y1="114" x2="68" y2="112" stroke="#9A7020" stroke-width="1.2" opacity="0.36" stroke-linecap="round"/>
+<line x1="24" y1="120" x2="68" y2="118" stroke="#9A7020" stroke-width="1.2" opacity="0.36" stroke-linecap="round"/>
+<line x1="92" y1="112" x2="134" y2="114" stroke="#9A7020" stroke-width="1.2" opacity="0.36" stroke-linecap="round"/>
+<line x1="92" y1="118" x2="136" y2="120" stroke="#9A7020" stroke-width="1.2" opacity="0.36" stroke-linecap="round"/>
+</svg>`,
+
+I: `<svg viewBox="0 0 160 178" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="pk-f" cx="44%" cy="36%" r="60%">
+    <stop offset="0%" stop-color="#1A9898"/><stop offset="100%" stop-color="#0A5A60"/>
+  </radialGradient>
+  <radialGradient id="pk-i" cx="34%" cy="28%" r="62%">
+    <stop offset="0%" stop-color="#00B490"/><stop offset="100%" stop-color="#005040"/>
+  </radialGradient>
+</defs>
+<line x1="80" y1="60" x2="80" y2="12" stroke="#007870" stroke-width="2.8" stroke-linecap="round"/>
+<line x1="63" y1="64" x2="50" y2="16" stroke="#007870" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="97" y1="64" x2="110" y2="16" stroke="#007870" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="48" y1="72" x2="30" y2="28" stroke="#007870" stroke-width="1.8" stroke-linecap="round"/>
+<line x1="112" y1="72" x2="130" y2="28" stroke="#007870" stroke-width="1.8" stroke-linecap="round"/>
+<circle cx="80" cy="10" r="11" fill="#3ABFB8"/><circle cx="80" cy="10" r="7" fill="#6E44C0"/><circle cx="80" cy="10" r="4" fill="#FFD060"/><circle cx="80" cy="9" r="2" fill="#2A0860"/>
+<circle cx="49" cy="14" r="8.5" fill="#3ABFB8"/><circle cx="49" cy="14" r="5.5" fill="#6E44C0"/><circle cx="49" cy="14" r="3" fill="#FFD060"/>
+<circle cx="111" cy="14" r="8.5" fill="#3ABFB8"/><circle cx="111" cy="14" r="5.5" fill="#6E44C0"/><circle cx="111" cy="14" r="3" fill="#FFD060"/>
+<circle cx="29" cy="26" r="7" fill="#3ABFB8"/><circle cx="29" cy="26" r="4.5" fill="#6E44C0"/><circle cx="29" cy="26" r="2.5" fill="#FFD060"/>
+<circle cx="131" cy="26" r="7" fill="#3ABFB8"/><circle cx="131" cy="26" r="4.5" fill="#6E44C0"/><circle cx="131" cy="26" r="2.5" fill="#FFD060"/>
+<ellipse cx="80" cy="114" rx="55" ry="54" fill="url(#pk-f)"/>
+<ellipse cx="80" cy="130" rx="35" ry="27" fill="#C4F0EA"/>
+<path d="M46 100 Q62 93 74 98" stroke="#007060" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/>
+<path d="M86 98 Q98 93 114 100" stroke="#007060" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/>
+<ellipse cx="62" cy="108" rx="17" ry="18" fill="white"/>
+<ellipse cx="62" cy="109" rx="12" ry="13" fill="url(#pk-i)"/>
+<ellipse cx="62" cy="110" rx="7" ry="9" fill="#001810"/>
+<ellipse cx="55" cy="102" rx="7" ry="5" fill="white" opacity="0.92"/>
+<ellipse cx="98" cy="108" rx="17" ry="18" fill="white"/>
+<ellipse cx="98" cy="109" rx="12" ry="13" fill="url(#pk-i)"/>
+<ellipse cx="98" cy="110" rx="7" ry="9" fill="#001810"/>
+<ellipse cx="91" cy="102" rx="7" ry="5" fill="white" opacity="0.92"/>
+<ellipse cx="44" cy="126" rx="12" ry="8" fill="#F080B0" opacity="0.2"/>
+<ellipse cx="116" cy="126" rx="12" ry="8" fill="#F080B0" opacity="0.2"/>
+<path d="M75 132 L80 142 L85 132 Z" fill="#E8B830"/>
+</svg>`,
+
+S: `<svg viewBox="0 0 180 160" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="kl-f" cx="42%" cy="36%" r="62%">
+    <stop offset="0%" stop-color="#C0B8B0"/><stop offset="100%" stop-color="#887870"/>
+  </radialGradient>
+  <radialGradient id="kl-i" cx="34%" cy="28%" r="62%">
+    <stop offset="0%" stop-color="#80684A"/><stop offset="100%" stop-color="#3A2010"/>
+  </radialGradient>
+</defs>
+<circle cx="26" cy="68" r="36" fill="#9A9490"/>
+<circle cx="26" cy="68" r="24" fill="#B8B0A8"/>
+<circle cx="26" cy="68" r="14" fill="#D0C8C0"/>
+<circle cx="154" cy="68" r="36" fill="#9A9490"/>
+<circle cx="154" cy="68" r="24" fill="#B8B0A8"/>
+<circle cx="154" cy="68" r="14" fill="#D0C8C0"/>
+<ellipse cx="90" cy="98" rx="58" ry="57" fill="url(#kl-f)"/>
+<ellipse cx="90" cy="116" rx="34" ry="24" fill="#EDE8E2"/>
+<path d="M58 84 Q72 76 84 82" stroke="#706058" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.55"/>
+<path d="M96 82 Q108 76 122 84" stroke="#706058" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.55"/>
+<ellipse cx="74" cy="93" rx="16" ry="17" fill="white"/>
+<ellipse cx="74" cy="94" rx="11" ry="12" fill="url(#kl-i)"/>
+<ellipse cx="74" cy="95" rx="6.5" ry="8.5" fill="#180800"/>
+<ellipse cx="68" cy="87" rx="6.5" ry="5" fill="white" opacity="0.92"/>
+<ellipse cx="106" cy="93" rx="16" ry="17" fill="white"/>
+<ellipse cx="106" cy="94" rx="11" ry="12" fill="url(#kl-i)"/>
+<ellipse cx="106" cy="95" rx="6.5" ry="8.5" fill="#180800"/>
+<ellipse cx="100" cy="87" rx="6.5" ry="5" fill="white" opacity="0.92"/>
+<ellipse cx="58" cy="112" rx="12" ry="8" fill="#D87060" opacity="0.18"/>
+<ellipse cx="122" cy="112" rx="12" ry="8" fill="#D87060" opacity="0.18"/>
+<ellipse cx="90" cy="117" rx="13" ry="10" fill="#5A3828"/>
+<ellipse cx="90" cy="115" rx="8.5" ry="6" fill="#7A5040"/>
+<ellipse cx="86" cy="117" rx="2.5" ry="2" fill="#4A2818" opacity="0.7"/>
+<ellipse cx="94" cy="117" rx="2.5" ry="2" fill="#4A2818" opacity="0.7"/>
+<path d="M84 128 Q90 134 96 128" stroke="#5A3828" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</svg>`,
+
+C: `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="ow-f" cx="42%" cy="36%" r="62%">
+    <stop offset="0%" stop-color="#B89070"/><stop offset="100%" stop-color="#785040"/>
+  </radialGradient>
+  <radialGradient id="ow-d" cx="50%" cy="40%" r="55%">
+    <stop offset="0%" stop-color="#FFF8EE"/><stop offset="100%" stop-color="#EDE0D0"/>
+  </radialGradient>
+  <radialGradient id="ow-i" cx="34%" cy="28%" r="64%">
+    <stop offset="0%" stop-color="#F0A010"/><stop offset="100%" stop-color="#B06000"/>
+  </radialGradient>
+</defs>
+<path d="M44 48 Q46 26 56 20 Q60 32 52 52Z" fill="#8A6848"/>
+<path d="M42 48 Q44 30 52 26 Q54 36 50 50Z" fill="#A88060"/>
+<path d="M116 48 Q114 26 104 20 Q100 32 108 52Z" fill="#8A6848"/>
+<path d="M118 48 Q116 30 108 26 Q106 36 110 50Z" fill="#A88060"/>
+<ellipse cx="80" cy="94" rx="57" ry="57" fill="url(#ow-f)"/>
+<ellipse cx="80" cy="96" rx="47" ry="47" fill="url(#ow-d)" opacity="0.88"/>
+<ellipse cx="80" cy="96" rx="39" ry="39" fill="url(#ow-d)"/>
+<path d="M36 90 Q44 84 52 90 Q60 84 68 90" fill="none" stroke="#B89070" stroke-width="1.5" opacity="0.36"/>
+<path d="M92 90 Q100 84 108 90 Q116 84 124 90" fill="none" stroke="#B89070" stroke-width="1.5" opacity="0.36"/>
+<path d="M34 88 Q59 80 78 88" fill="none" stroke="#8C6A50" stroke-width="1.8" opacity="0.4" stroke-linecap="round"/>
+<path d="M82 88 Q101 80 126 88" fill="none" stroke="#8C6A50" stroke-width="1.8" opacity="0.4" stroke-linecap="round"/>
+<circle cx="59" cy="94" r="22" fill="white"/>
+<circle cx="59" cy="95" r="16" fill="url(#ow-i)"/>
+<circle cx="59" cy="96" r="9" fill="#180800"/>
+<ellipse cx="52" cy="87" rx="7.5" ry="5.5" fill="white" opacity="0.92"/>
+<circle cx="59" cy="94" r="22" fill="none" stroke="#A07060" stroke-width="1.5" opacity="0.28"/>
+<circle cx="101" cy="94" r="22" fill="white"/>
+<circle cx="101" cy="95" r="16" fill="url(#ow-i)"/>
+<circle cx="101" cy="96" r="9" fill="#180800"/>
+<ellipse cx="94" cy="87" rx="7.5" ry="5.5" fill="white" opacity="0.92"/>
+<circle cx="101" cy="94" r="22" fill="none" stroke="#A07060" stroke-width="1.5" opacity="0.28"/>
+<path d="M34 92 Q46 84 59 92" stroke="#A0B8C0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<line x1="59" y1="92" x2="101" y2="92" stroke="#A0B8C0" stroke-width="2.2"/>
+<path d="M101 92 Q114 84 126 92" stroke="#A0B8C0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M74 114 L80 124 L86 114 Z" fill="#D89020"/>
+<ellipse cx="44" cy="120" rx="10" ry="7" fill="#FFB080" opacity="0.2"/>
+<ellipse cx="116" cy="120" rx="10" ry="7" fill="#FFB080" opacity="0.2"/>
+</svg>`,
+
+chameleon: `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="ch-f" cx="44%" cy="38%" r="58%">
+    <stop offset="0%" stop-color="#6EC88A"/><stop offset="100%" stop-color="#3A7848"/>
+  </radialGradient>
+</defs>
+<path d="M80 56 Q76 38 60 20 Q70 36 80 56Z" fill="#4AAA68" opacity="0.85"/>
+<path d="M80 56 Q80 36 80 18 Q82 36 80 56Z" fill="#7A3AB8" opacity="0.82"/>
+<path d="M80 56 Q84 38 100 20 Q90 36 80 56Z" fill="#3A7ABE" opacity="0.85"/>
+<ellipse cx="80" cy="100" rx="56" ry="54" fill="url(#ch-f)"/>
+<path d="M30 86 Q40 80 50 86 Q60 80 70 86 Q80 80 90 86 Q100 80 110 86 Q120 80 130 86" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.8"/>
+<path d="M30 100 Q40 94 50 100 Q60 94 70 100 Q80 94 90 100 Q100 94 110 100 Q120 94 130 100" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.8"/>
+<ellipse cx="80" cy="118" rx="35" ry="25" fill="#90E8D8" opacity="0.5"/>
+<circle cx="48" cy="92" r="16" fill="#3A4860"/>
+<circle cx="48" cy="92" r="13" fill="#8060D0"/>
+<ellipse cx="48" cy="93" rx="7.5" ry="9" fill="#0A0428"/>
+<ellipse cx="43" cy="86" rx="5.5" ry="4" fill="white" opacity="0.92"/>
+<circle cx="112" cy="92" r="16" fill="#384860"/>
+<circle cx="112" cy="92" r="13" fill="#3A90D8"/>
+<ellipse cx="112" cy="93" rx="7.5" ry="9" fill="#080A28"/>
+<ellipse cx="107" cy="86" rx="5.5" ry="4" fill="white" opacity="0.92"/>
+<ellipse cx="42" cy="115" rx="10" ry="7" fill="#F0B860" opacity="0.28"/>
+<ellipse cx="118" cy="115" rx="10" ry="7" fill="#F0B860" opacity="0.28"/>
+<path d="M60 122 Q80 134 100 122" stroke="rgba(255,255,255,0.55)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M80 126 Q79 140 72 150" stroke="#E05080" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<circle cx="70" cy="152" r="5" fill="#E05080"/>
+</svg>`
+
+};
+
+// ── 詞語題（原始 20 題）A=I  B=D  C=C  D=S ─────────────────
+const wordQs = [
+  { type:'word', opts:[{t:'I',w:'活潑生動'},{t:'D',w:'冒險精神'},{t:'C',w:'善於分析'},{t:'S',w:'適應性強'}] },
+  { type:'word', opts:[{t:'I',w:'善於社交'},{t:'D',w:'善於說服'},{t:'C',w:'堅持不懈'},{t:'S',w:'平和溫順'}] },
+  { type:'word', opts:[{t:'I',w:'可愛'},    {t:'D',w:'勇敢'},    {t:'C',w:'體貼'},    {t:'S',w:'自律'}] },
+  { type:'word', opts:[{t:'I',w:'無拘無束'},{t:'D',w:'善於應變'},{t:'C',w:'注意細節'},{t:'S',w:'外交手腕'}] },
+  { type:'word', opts:[{t:'I',w:'使人振作'},{t:'D',w:'喜競爭勝'},{t:'C',w:'自我犧牲'},{t:'S',w:'較少爭辯'}] },
+  { type:'word', opts:[{t:'I',w:'活力充沛'},{t:'D',w:'自立'},    {t:'C',w:'敏感'},    {t:'S',w:'滿足'}] },
+  { type:'word', opts:[{t:'I',w:'情感外露'},{t:'D',w:'果斷'},    {t:'C',w:'深沉'},    {t:'S',w:'淡然幽默'}] },
+  { type:'word', opts:[{t:'I',w:'樂觀'},    {t:'D',w:'坦率'},    {t:'C',w:'井井有條'},{t:'S',w:'遷就'}] },
+  { type:'word', opts:[{t:'I',w:'愛插嘴'},  {t:'D',w:'沒耐性'},  {t:'C',w:'優柔寡斷'},{t:'S',w:'無安全感'}] },
+  { type:'word', opts:[{t:'I',w:'散漫'},    {t:'D',w:'缺乏同情心'},{t:'C',w:'報復'}, {t:'S',w:'缺乏熱情'}] },
+  { type:'word', opts:[{t:'I',w:'煩躁'},    {t:'D',w:'輕率'},    {t:'C',w:'挑剔'},    {t:'S',w:'膽小'}] },
+  { type:'word', opts:[{t:'I',w:'健忘'},    {t:'D',w:'控制欲'},  {t:'C',w:'孤僻'},    {t:'S',w:'懶惰'}] },
+  { type:'word', opts:[{t:'I',w:'激勵人心'},{t:'D',w:'獨立'},    {t:'C',w:'理想主義'},{t:'S',w:'含蓄'}] },
+  { type:'word', opts:[{t:'I',w:'推動者'},  {t:'D',w:'領導者'},  {t:'C',w:'計劃者'},  {t:'S',w:'聆聽者'}] },
+  { type:'word', opts:[{t:'I',w:'多言'},    {t:'D',w:'執著'},    {t:'C',w:'考慮周到'},{t:'S',w:'耐性'}] },
+  { type:'word', opts:[{t:'I',w:'即興'},    {t:'D',w:'固執'},    {t:'C',w:'難於取悅'},{t:'S',w:'猶豫不決'}] },
+  { type:'word', opts:[{t:'I',w:'天真'},    {t:'D',w:'魯莽'},    {t:'C',w:'消極'},    {t:'S',w:'冷漠'}] },
+  { type:'word', opts:[{t:'I',w:'受歡迎'},  {t:'D',w:'工作狂'},  {t:'C',w:'過於嚴肅'},{t:'S',w:'羞澀'}] },
+  { type:'word', opts:[{t:'I',w:'露骨'},    {t:'D',w:'專橫'},    {t:'C',w:'乏味'},    {t:'S',w:'扭捏'}] },
+  { type:'word', opts:[{t:'I',w:'不專注'},  {t:'D',w:'不容忍'},  {t:'C',w:'情緒化'},  {t:'S',w:'無目標'}] },
+];
+
+// ── 情境題（10 題）────────────────────────────────────────────
+const scenarioQs = [
+  { type:'scenario', q:'在小組討論中，你通常是…',
+    opts:[{t:'I',icon:'🎉',label:'讓氣氛活躍，讓大家都想發言'},{t:'D',icon:'⚡',label:'直接說出想法，帶領討論方向'},{t:'S',icon:'🤝',label:'靜靜聆聽，在需要時給予支持'},{t:'C',icon:'📋',label:'整理大家的意見，分析優缺點'}]},
+  { type:'scenario', q:'遇到困難的問題，你第一個反應是…',
+    opts:[{t:'D',icon:'🚀',label:'立刻嘗試，邊做邊解決'},{t:'I',icon:'💬',label:'找朋友討論，集思廣益'},{t:'S',icon:'🌿',label:'保持冷靜，一步一步來'},{t:'C',icon:'🔍',label:'先蒐集資料，仔細研究再行動'}]},
+  { type:'scenario', q:'放假時，你最想做的事是…',
+    opts:[{t:'I',icon:'🎊',label:'去熱鬧的地方、認識新朋友'},{t:'D',icon:'🧗',label:'嘗試有挑戰性的新活動'},{t:'S',icon:'☕',label:'和好友窩在家裡聊天、放鬆'},{t:'C',icon:'📖',label:'讀書或研究自己感興趣的主題'}]},
+  { type:'scenario', q:'在衝突發生時，你的反應是…',
+    opts:[{t:'I',icon:'😄',label:'用幽默緩解緊張，讓大家笑笑'},{t:'D',icon:'🗣️',label:'直接面對，把問題說清楚'},{t:'S',icon:'🕊️',label:'盡量避免衝突，維持和平'},{t:'C',icon:'🧩',label:'分析問題來源，找出最合理的解法'}]},
+  { type:'scenario', q:'哪一句話最符合你的做事風格？',
+    opts:[{t:'D',icon:'⚡',label:'「先做再說，機會不等人！」'},{t:'I',icon:'🌞',label:'「人生要快樂，一起玩才好！」'},{t:'S',icon:'🌿',label:'「穩紮穩打，慢慢來比較快。」'},{t:'C',icon:'🔭',label:'「細節決定成敗，品質最重要。」'}]},
+  { type:'scenario', q:'在學校做報告，你最享受哪個環節？',
+    opts:[{t:'I',icon:'🌟',label:'上台報告，表現給大家看'},{t:'D',icon:'🏁',label:'設定目標、帶領組員完成任務'},{t:'S',icon:'🤝',label:'和同學合作，一起完成'},{t:'C',icon:'🔬',label:'做深入的資料蒐集和分析'}]},
+  { type:'scenario', q:'面對新環境（新班級、新社團），你通常…',
+    opts:[{t:'I',icon:'🙋',label:'主動認識新朋友，馬上融入'},{t:'D',icon:'🎯',label:'觀察環境，找機會展現自己'},{t:'S',icon:'🌱',label:'慢慢熟悉，等時機自然融入'},{t:'C',icon:'🗺️',label:'先了解規則和文化再行動'}]},
+  { type:'scenario', q:'你在團隊中最重要的貢獻是…',
+    opts:[{t:'I',icon:'🤩',label:'激勵士氣，讓大家保持活力'},{t:'D',icon:'💡',label:'提出大膽的目標和方向'},{t:'S',icon:'🌉',label:'協調各方，讓合作更順暢'},{t:'C',icon:'🔎',label:'確保品質和細節都正確'}]},
+  { type:'scenario', q:'你更喜歡哪種學習方式？',
+    opts:[{t:'I',icon:'🎮',label:'遊戲化學習，和同學互動'},{t:'D',icon:'🏋️',label:'直接挑戰，從做中學'},{t:'S',icon:'🫶',label:'老師有耐心地引導和陪伴'},{t:'C',icon:'📊',label:'有系統的教學，循序漸進'}]},
+  { type:'scenario', q:'當朋友遇到困難來找你，你通常…',
+    opts:[{t:'I',icon:'🎁',label:'給予鼓勵，讓對方重拾自信'},{t:'D',icon:'🛠️',label:'直接給建議，幫對方解決問題'},{t:'S',icon:'👂',label:'靜靜陪伴，讓對方知道你在'},{t:'C',icon:'📝',label:'提供詳細的步驟或參考資訊'}]},
+];
+
+// ── 動物資料 ─────────────────────────────────────────────────
+const Animals = {
+  D: {
+    emoji:'🐯', svgKey:'D',
+    name:'老虎', badge:'D 型 — 支配型', line:'天生領袖，目標導向的行動派！',
+    grad:'linear-gradient(135deg,#e53e3e,#9b2335)',
+    traits:[{i:'⚡',t:'行動力強'},{i:'🎯',t:'目標導向'},{i:'💪',t:'果斷果敢'},{i:'🗣️',t:'主動積極'},{i:'🏆',t:'追求成就'},{i:'🚀',t:'敢衝敢試'}],
+    desc:`你是老虎型的領袖！目標導向、主動、果斷，天生就是帶頭衝鋒的人。\n\n✅ 優勢：決策快速、喜歡挑戰、做事有效率、不怕冒險。\n⚠️ 弱點：有時顯得強勢、缺乏耐心，容易忽略他人感受。`,
+    career: {
+      startup: { title:'🦁 創業角色', color:'#fff5f5', border:'#fc8181', tag:'#ffe0e0', tagText:'#c53030',
+        roles:['創辦人 / CEO','市場開拓者','危機處理負責人','業務拓展主力'] },
+      team:    { title:'🏢 團隊職位', color:'#fff9f0', border:'#f6ad55', tag:'#fff0db', tagText:'#c05621',
+        roles:['執行長 / CEO','業務總監','專案主管','危機處理主管'] },
+    },
+    tipBg:'#fff5f5', tipBorder:'#fc8181', tipHead:'💡 成長提示',
+    tipText:'你的行動力讓人刮目相看！但記得衝刺前先聽聽夥伴的想法——「一起」前進，往往比「快速」前進更有爆發力！',
+  },
+  I: {
+    emoji:'🦚', svgKey:'I',
+    name:'孔雀', badge:'I 型 — 影響型', line:'人群中最閃亮的那顆星！',
+    grad:'linear-gradient(135deg,#d69e2e,#975a16)',
+    traits:[{i:'😄',t:'熱情開朗'},{i:'🌟',t:'感染力強'},{i:'🎨',t:'富有創意'},{i:'💬',t:'擅長溝通'},{i:'🤝',t:'善於社交'},{i:'🎉',t:'帶動氣氛'}],
+    desc:`你是孔雀型的魅力擔當！人際導向、熱情，擅長說服與社交，走到哪裡都帶著光芒。\n\n✅ 優勢：具親和力、善於溝通、能感染他人、充滿創意。\n⚠️ 弱點：過於樂觀、細節處理較弱，不喜歡繁瑣的紀錄工作。`,
+    career: {
+      startup: { title:'🦚 創業角色', color:'#fffbeb', border:'#f6e05e', tag:'#fff9db', tagText:'#975a16',
+        roles:['品牌共同創辦人','社群行銷負責人','人脈拓展核心','產品推廣大使'] },
+      team:    { title:'🏢 團隊職位', color:'#fff8e6', border:'#f6ad55', tag:'#fff0db', tagText:'#c05621',
+        roles:['行銷長 / CMO','業務開發主管','公關總監','社群媒體經理'] },
+    },
+    tipBg:'#fffbeb', tipBorder:'#f6e05e', tipHead:'💡 成長提示',
+    tipText:'你的魅力讓人著迷！試著給自己一些「靜音時間」——學會傾聽，你的影響力會更加深遠！',
+  },
+  S: {
+    emoji:'🐨', svgKey:'S',
+    name:'無尾熊', badge:'S 型 — 穩健型', line:'溫柔可靠，大家心中的守護者！',
+    grad:'linear-gradient(135deg,#38a169,#1c5e37)',
+    traits:[{i:'❤️',t:'溫暖體貼'},{i:'🌿',t:'穩定可靠'},{i:'👂',t:'耐心傾聽'},{i:'🕊️',t:'追求和諧'},{i:'🤝',t:'忠誠守信'},{i:'☮️',t:'善於合作'}],
+    desc:`你是無尾熊型的和諧守護者！人際導向、冷靜友善，追求穩定，是團隊裡大家最信任的人。\n\n✅ 優勢：可靠、耐心傾聽、善於合作、忠誠度高。\n⚠️ 弱點：不喜歡改變、行動較慢，不太容易主動展現情緒。`,
+    career: {
+      startup: { title:'🐨 創業角色', color:'#f0fff4', border:'#68d391', tag:'#e0fff0', tagText:'#276749',
+        roles:['共同創辦人（穩定型）','團隊文化守護者','客戶關係負責人','營運協調核心'] },
+      team:    { title:'🏢 團隊職位', color:'#f0fff4', border:'#68d391', tag:'#e0fff0', tagText:'#276749',
+        roles:['人力資源總監','客戶成功主管','營運長 / COO','行政與協調主管'] },
+    },
+    tipBg:'#f0fff4', tipBorder:'#68d391', tipHead:'💡 成長提示',
+    tipText:'你的穩定讓大家很安心！記得也要照顧自己的需求——勇敢說出你的想法，你的聲音同樣重要！',
+  },
+  C: {
+    emoji:'🦉', svgKey:'C',
+    name:'貓頭鷹', badge:'C 型 — 分析型', line:'深思熟慮，追求完美的智者！',
+    grad:'linear-gradient(135deg,#3182ce,#1a4e8a)',
+    traits:[{i:'🧠',t:'邏輯思考'},{i:'🔍',t:'注重細節'},{i:'📊',t:'數據分析'},{i:'✅',t:'追求精準'},{i:'📚',t:'勤於學習'},{i:'🏅',t:'嚴謹專業'}],
+    desc:`你是貓頭鷹型的精準智者！任務導向、嚴謹，追求精準與品質，是把關細節的最強守門員。\n\n✅ 優勢：注重細節、邏輯強、謹慎遵循規範、展現高度專業。\n⚠️ 弱點：完美主義讓決策較慢，對自己和他人都有很高要求。`,
+    career: {
+      startup: { title:'🦉 創業角色', color:'#ebf8ff', border:'#63b3ed', tag:'#dbeafe', tagText:'#2c5282',
+        roles:['技術共同創辦人','產品架構師','數據與財務把關人','系統與流程建立者'] },
+      team:    { title:'🏢 團隊職位', color:'#ebf8ff', border:'#63b3ed', tag:'#dbeafe', tagText:'#2c5282',
+        roles:['技術長 / CTO','數據分析師','財務長 / CFO','品質保證主管'] },
+    },
+    tipBg:'#ebf8ff', tipBorder:'#63b3ed', tipHead:'💡 成長提示',
+    tipText:'你的嚴謹令人敬佩！試著接受「夠好就可以開始」——完美可以在過程中慢慢打磨，行動本身就是進步！',
+  },
+};
+
+// ── 變色龍組合描述 ────────────────────────────────────────────
+const ChameleonCombos = {
+  'DI':{ line:'行動力與感染力兼具，天生的明星領袖！',
+    desc:`你同時擁有老虎的果斷衝勁和孔雀的熱情魅力！\n\n你能帶動場面、快速做決定，又擅長說服和激勵別人。大家既敬佩又喜歡跟著你走，天生就適合站在舞台中央！`,
+    career:{ startup:['共同創辦人（衝鋒型）','業務 ✕ 品牌雙軌負責人'], team:['執行長 / CEO','行銷業務雙棲主管'] }},
+  'DS':{ line:'剛柔並濟，兼顧目標與人情的全才！',
+    desc:`你結合了老虎的執行力和無尾熊的溫暖體貼！\n\n追求目標時不忘照顧身邊的人，能帶領團隊又讓大家感到安心。你是最受信賴的核心人物！`,
+    career:{ startup:['創辦人（平衡型）','文化 ✕ 績效雙軌負責人'], team:['執行長 / CEO','人才發展主管'] }},
+  'DC':{ line:'高標準、強執行，追求卓越的完美戰士！',
+    desc:`你同時有老虎的行動力和貓頭鷹的嚴謹思維！\n\n你做事又快又精準，不只要達成目標，還要做到最好。計劃縝密又能快速推進，是強大的戰略型人才！`,
+    career:{ startup:['技術型創辦人','產品 ✕ 執行雙軌主導'], team:['技術長 / CTO','策略長 / CSO'] }},
+  'IS':{ line:'溫暖又開朗，讓每個人都愛上你的存在！',
+    desc:`你結合了孔雀的活力熱情和無尾熊的溫柔體貼！\n\n既能帶動氣氛，又真心關心每個人的感受。人人都喜歡和你在一起，你是團體裡的暖心核心！`,
+    career:{ startup:['社群與社群經理','品牌形象守護者'], team:['人力資源主管','客戶成功長'] }},
+  'IC':{ line:'創意與邏輯兼備，充滿魅力的思考達人！',
+    desc:`你同時有孔雀的表達創意和貓頭鷹的分析深度！\n\n能把複雜的道理說得生動有趣，讓人聽得入迷又受益。你是最懂得把知識變成影響力的人！`,
+    career:{ startup:['產品行銷創辦人','內容策略核心'], team:['行銷長 / CMO','產品經理'] }},
+  'SC':{ line:'穩如磐石，最值得信賴的幕後功臣！',
+    desc:`你結合了無尾熊的耐心包容和貓頭鷹的細心嚴謹！\n\n你不喜歡出風頭，但你的付出和品質讓整個團隊穩如泰山。有你在就不會出錯！`,
+    career:{ startup:['財務與營運共同創辦人','系統與流程建立者'], team:['財務長 / CFO','品保主管 / 法務'] }},
+};
+
+function buildChameleon(types) {
+  const sorted = [...types].sort();
+  const key = sorted.slice(0,2).join('');
+  const combo = ChameleonCombos[key] || {};
+  const typeNames = { D:'老虎🐯', I:'孔雀🦚', S:'無尾熊🐨', C:'貓頭鷹🦉' };
+  const typeLabels = { D:'D 支配', I:'I 影響', S:'S 穩健', C:'C 分析' };
+  const namesStr = sorted.map(t=>typeNames[t]).join(' ＋ ');
+  const badgeStr = sorted.map(t=>typeLabels[t]).join(' × ');
+  const mergedTraits = [];
+  sorted.forEach(t => mergedTraits.push(...Animals[t].traits.slice(0,3)));
+  const careerRoles = combo.career || { startup:['靈活適應各種角色'], team:['跨職能協調者'] };
+  return {
+    emoji:'🦎', svgKey:'chameleon',
+    name:'變色龍', badge:badgeStr,
+    line: combo.line || '多元人格，隨時切換最佳狀態！',
+    grad:'linear-gradient(135deg,#6b46c1,#2b6cb0)',
+    traits: mergedTraits,
+    desc: (combo.desc || `你在 ${namesStr} 都拿到最高分！\n\n`) + `這代表你能靈活切換不同風格，隨機應變、適應各種人和情境——這正是「變色龍」最厲害的超能力！`,
+    career: {
+      startup: { title:'🦎 創業角色', color:'#faf5ff', border:'#b794f4', tag:'#ede9fe', tagText:'#553c9a',
+        roles: careerRoles.startup },
+      team:    { title:'🏢 團隊職位', color:'#ebf8ff', border:'#90cdf4', tag:'#dbeafe', tagText:'#2b6cb0',
+        roles: careerRoles.team },
+    },
+    tipBg:'#faf5ff', tipBorder:'#b794f4', tipHead:'💡 變色龍的成長提示',
+    tipText:'你的彈性是超能力！但有時「什麼都行」會讓人不確定你真正的立場。在重要時刻選擇一個主要風格，讓大家更清楚地認識你！',
+  };
+}
+
+// ── 狀態 ─────────────────────────────────────────────────────
+let allQs = [], cur = 0, picked = null, scores = {D:0,I:0,S:0,C:0};
+const letters = ['A','B','C','D'];
+
+function shuffle(arr) {
+  return arr.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);
+}
+
+function startQuiz() {
+  allQs = shuffle([...wordQs,...scenarioQs]).map(q=>({...q, opts:shuffle([...q.opts])}));
+  cur=0; picked=null; scores={D:0,I:0,S:0,C:0};
+  document.getElementById('screen-welcome').style.display='none';
+  document.getElementById('screen-quiz').style.display='block';
+  render();
+}
+
+function render() {
+  picked = null;
+  const q = allQs[cur];
+  const total = allQs.length;
+  const pct = Math.round(cur/total*100);
+  document.getElementById('q-idx').textContent = cur+1;
+  document.getElementById('q-num').textContent  = `${cur+1} / ${total}`;
+  document.getElementById('prog').style.width   = pct+'%';
+  if (q.type === 'word') {
+    document.getElementById('q-label').textContent = '選出最符合你的詞語';
+    document.getElementById('q-title').textContent = '以下哪個詞語，最能描述你？';
+    renderWord(q.opts);
+  } else {
+    document.getElementById('q-label').textContent = '選出最符合你的情境';
+    document.getElementById('q-title').textContent = q.q;
+    renderScenario(q.opts);
+  }
+  const btn = document.getElementById('btn-next');
+  btn.className = 'btn-next';
+  btn.textContent = cur===total-1 ? '查看結果 🎉' : '下一題 →';
+}
+
+function renderWord(opts) {
+  const c = document.getElementById('opts');
+  c.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'options-grid';
+  opts.forEach((opt,i) => {
+    const card = document.createElement('div');
+    card.className = 'opt-card';
+    card.innerHTML = `<div class="opt-letter">${letters[i]}</div><div class="opt-word">${opt.w}</div>`;
+    card.onclick = () => select(opt.t, card);
+    grid.appendChild(card);
+  });
+  c.appendChild(grid);
+}
+
+function renderScenario(opts) {
+  const c = document.getElementById('opts');
+  c.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'options-list';
+  opts.forEach((opt,i) => {
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    row.innerHTML = `<div class="opt-letter">${letters[i]}</div><div class="opt-icon-box">${opt.icon}</div><div class="opt-sentence">${opt.label}</div>`;
+    row.onclick = () => select(opt.t, row);
+    list.appendChild(row);
+  });
+  c.appendChild(list);
+}
+
+function select(type, el) {
+  document.querySelectorAll('.opt-card,.opt-row').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  picked = type;
+  document.getElementById('btn-next').classList.add('active');
+}
+
+function next() {
+  if (!picked) return;
+  scores[picked]++;
+  cur++;
+  if (cur >= allQs.length) showResult();
+  else render();
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').style.display  = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+
+  const max = Math.max(...Object.values(scores));
+  const winners = Object.keys(scores).filter(k=>scores[k]===max);
+  const a = winners.length >= 2 ? buildChameleon(winners) : Animals[winners[0]];
+
+  // Header
+  document.getElementById('r-header').style.background = a.grad;
+  document.getElementById('r-badge').textContent = a.badge;
+  document.getElementById('r-emoji').innerHTML   = SVGs[a.svgKey] || `<span style="font-size:72px">${a.emoji}</span>`;
+  document.getElementById('r-name').textContent  = `你是 ${a.name}！`;
+  document.getElementById('r-line').textContent  = a.line;
+
+  // Bars
+  setTimeout(() => {
+    ['D','I','S','C'].forEach(k => {
+      const pct = Math.round(scores[k]/allQs.length*100);
+      document.getElementById('bar-'+k.toLowerCase()).style.width = pct+'%';
+      document.getElementById('val-'+k.toLowerCase()).textContent = scores[k];
+    });
+  }, 120);
+
+  // Traits
+  const tw = document.getElementById('traits');
+  tw.innerHTML = '';
+  a.traits.forEach(tr => {
+    const p = document.createElement('div');
+    p.className = 'trait-pill';
+    p.innerHTML = `<span>${tr.i}</span>${tr.t}`;
+    tw.appendChild(p);
+  });
+
+  // Desc
+  document.getElementById('r-desc').textContent = a.desc;
+
+  // Career
+  const cg = document.getElementById('r-career');
+  cg.innerHTML = '';
+  ['startup','team'].forEach(key => {
+    const c = a.career[key];
+    const card = document.createElement('div');
+    card.className = 'career-card';
+    card.style.cssText = `background:${c.color};border:1.5px solid ${c.border};border-radius:14px;padding:14px 16px;`;
+    const tagsHTML = c.roles.map(r =>
+      `<span class="career-tag" style="background:${c.tag};color:${c.tagText};">${r}</span>`
+    ).join('');
+    card.innerHTML = `<div class="career-card-title" style="color:${c.tagText}">${c.title}</div>${tagsHTML}`;
+    cg.appendChild(card);
+  });
+
+  // Tip
+  const tip = document.getElementById('r-tip');
+  tip.style.background   = a.tipBg;
+  tip.style.borderColor  = a.tipBorder;
+  document.getElementById('r-tip-head').textContent = a.tipHead;
+  document.getElementById('r-tip-body').textContent = a.tipText;
+
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function restart() {
+  document.getElementById('screen-result').style.display  = 'none';
+  document.getElementById('screen-welcome').style.display = 'block';
+}
+</script>
+</body>
+</html>
