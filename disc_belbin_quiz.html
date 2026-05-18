@@ -824,10 +824,23 @@ function nextBelbin() {
 }
 
 // ── Result ─────────────────────────────────────────────────────
+// 每個角色在 20 題中出現的次數（SP=8，其餘=9）
+const BELBIN_APPEARANCES = { SH:9, IM:9, CF:9, CO:9, TW:9, RI:9, PL:9, ME:9, SP:8 };
+// 同分時的固定優先順序（確保結果可重現，不隨機）
+const BELBIN_TIEBREAK = ['CO','TW','SH','IM','PL','RI','ME','CF','SP'];
+
 function showResult() {
-  const max = Math.max(...Object.values(belbinScores));
-  const winners = Object.keys(belbinScores).filter(k=>belbinScores[k]===max);
-  belbinRole = winners.length === 1 ? winners[0] : winners[Math.floor(Math.random()*winners.length)];
+  // 用「得分率」取代原始分數，消除 SP 出現次數不同的先天劣勢
+  const rates = {};
+  Object.keys(belbinScores).forEach(r => {
+    rates[r] = belbinScores[r] / BELBIN_APPEARANCES[r];
+  });
+  const maxRate = Math.max(...Object.values(rates));
+  const winners = Object.keys(rates).filter(r => rates[r] === maxRate);
+  // 同分時依固定優先順序取第一個，結果可重現
+  belbinRole = winners.length === 1
+    ? winners[0]
+    : BELBIN_TIEBREAK.find(r => winners.includes(r));
 
   const comboKey = discType + '-' + belbinRole;
   const combo = COMBOS[comboKey];
