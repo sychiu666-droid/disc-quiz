@@ -943,8 +943,17 @@ function computeBelbinMax() {
 }
 const BELBIN_MAX = computeBelbinMax();
 
-// 同分時的固定優先順序（確保結果可重現，不隨機）
-const BELBIN_TIEBREAK = ['TW','RI','PL','SH','IM','ME','CF','CO','SP'];
+// 同分時依 DISC 類型決定優先順序——讓人格傾向替你打破平手
+// D 老虎：行動導向，衝勁與執行優先
+// I 孔雀：人際影響，創意與探索優先
+// S 無尾熊：穩定支持，可靠與和諧優先
+// C 貓頭鷹：分析精準，深度與品質優先
+const BELBIN_TIEBREAK = {
+  D: ['SH','CO','IM','CF','RI','TW','PL','ME','SP'],
+  I: ['RI','PL','TW','CO','SH','ME','IM','CF','SP'],
+  S: ['TW','IM','CF','CO','ME','RI','SP','SH','PL'],
+  C: ['ME','CF','SP','PL','CO','IM','RI','TW','SH']
+};
 
 function showResult() {
   // 用「得分率 = 實際分數 ÷ 理論最高分」正規化，消除各角色出現頻率不同的先天偏差
@@ -957,7 +966,7 @@ function showResult() {
   // 同分時依固定優先順序取第一個，結果可重現
   belbinRole = winners.length === 1
     ? winners[0]
-    : BELBIN_TIEBREAK.find(r => winners.includes(r));
+    : BELBIN_TIEBREAK[discType].find(r => winners.includes(r));
 
   const comboKey = discType + '-' + belbinRole;
   const combo = COMBOS[comboKey];
