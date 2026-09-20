@@ -295,6 +295,25 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
 }
 .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.35); }
 
+/* ── DISC BANNER & ANIMAL IMAGES ── */
+.disc-banner-img {
+  width: 100%; display: block; border-radius: 20px 20px 0 0;
+  max-height: 180px; object-fit: cover; object-position: center 30%;
+}
+.animal-card img.disc-photo {
+  width: 100%; height: 140px; object-fit: cover;
+  object-position: center 20%; border-radius: 12px; margin-bottom: 10px;
+  display: block;
+}
+img.disc-result-photo {
+  width: 104px; height: 104px; object-fit: cover;
+  object-position: center 20%; border-radius: 50%;
+}
+img.disc-mini-photo {
+  width: 52px; height: 52px; object-fit: cover;
+  object-position: center 20%; border-radius: 50%;
+}
+
 /* ── RESULT CODE ── */
 .code-card {
   background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
@@ -314,7 +333,8 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
 
 <!-- ── ENTRY FORM ── -->
 <div id="screen-entry" class="screen active">
-  <div class="logo-row">🐯🦚🐨🦉</div>
+  <img src="disc-banner.webp" alt="DISC × Belbin" class="disc-banner-img">
+  <div style="padding: 24px 32px 0">
   <h2>DISC × Belbin 雙重人格探索</h2>
   <p class="entry-sub">請先填寫基本資料，完成後進入測驗</p>
   <div class="form-group">
@@ -341,11 +361,13 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
     <input type="text" id="f-name" placeholder="請輸入姓名">
   </div>
   <button class="btn-start" onclick="submitEntry()">開始測驗 →</button>
+  </div>
 </div>
 
 <!-- ── WELCOME ── -->
 <div id="screen-welcome" class="screen">
-  <div class="logo-row">🐯🦚🐨🦉</div>
+  <img src="disc-banner.webp" alt="DISC × Belbin" class="disc-banner-img">
+  <div style="padding: 20px 36px 0; text-align:center">
   <h1>DISC × Belbin</h1>
   <p class="subtitle">雙重人格探索<br>了解你的個性特質 × 最適合的團隊角色</p>
 
@@ -359,6 +381,8 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
 
   <p class="divider-label">你知道你的 DISC 動物嗎？</p>
 
+  </div>
+  <div style="padding: 0 36px 32px; text-align:center">
   <div class="path-cards">
     <div class="path-card path-a" onclick="goToDiscSelect()">
       <div class="path-icon">✅</div>
@@ -373,36 +397,36 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
         <div class="path-title">還不確定，先測看看</div>
         <div class="path-desc">完成 30 題 DISC 測驗，再接著做 20 題 Belbin ─ 共 50 題</div>
       </div>
-    </div>
   </div>
 </div>
 
 <!-- ── DISC SELECT ── -->
 <div id="screen-disc-select" class="screen">
-  <div style="padding:28px 24px 20px">
-    <button onclick="goBack('welcome')" style="background:none;border:none;color:#718096;cursor:pointer;font-size:0.88rem;font-weight:700;margin-bottom:16px;">← 返回</button>
+  <img src="disc-banner.webp" alt="DISC 動物" class="disc-banner-img">
+  <div style="padding:20px 24px 12px">
+    <button onclick="goBack('welcome')" style="background:none;border:none;color:#718096;cursor:pointer;font-size:0.88rem;font-weight:700;margin-bottom:12px;">← 返回</button>
     <div class="select-title">你是哪種 DISC 動物？</div>
     <div class="select-sub">選擇最符合你個性的動物</div>
   </div>
   <div style="padding:0 24px 32px">
     <div class="animal-grid">
       <div class="animal-card disc-d" onclick="selectDiscType('D')">
-        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="s-tg-f" cx="45%" cy="36%" r="62%"><stop offset="0%" stop-color="#ECA832"/><stop offset="100%" stop-color="#A86018"/></radialGradient><radialGradient id="s-tg-i" cx="34%" cy="30%" r="62%"><stop offset="0%" stop-color="#C88A08"/><stop offset="100%" stop-color="#784600"/></radialGradient></defs><path d="M34 56 Q22 16 50 22 Q58 40 46 58Z" fill="#C07818"/><path d="M37 54 Q28 24 48 28 Q52 42 44 56Z" fill="#EDAAB2"/><path d="M126 56 Q138 16 110 22 Q102 40 114 58Z" fill="#C07818"/><path d="M123 54 Q132 24 112 28 Q108 42 116 56Z" fill="#EDAAB2"/><ellipse cx="80" cy="94" rx="58" ry="57" fill="url(#s-tg-f)"/><ellipse cx="80" cy="112" rx="34" ry="25" fill="#FFF2D8"/><path d="M68 58 C70 46 72 45 74 58" fill="#9A6010" opacity="0.42"/><path d="M78 56 C79 46 81 45 82 56" fill="#9A6010" opacity="0.42"/><path d="M86 58 C88 45 90 46 92 58" fill="#9A6010" opacity="0.42"/><path d="M46 74 Q62 67 74 72" stroke="#9A6010" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/><path d="M86 72 Q98 67 114 74" stroke="#9A6010" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/><ellipse cx="62" cy="88" rx="19" ry="20" fill="white"/><ellipse cx="62" cy="89" rx="13" ry="14" fill="url(#s-tg-i)"/><ellipse cx="62" cy="90" rx="7.5" ry="9.5" fill="#140400"/><ellipse cx="54" cy="82" rx="7.5" ry="5.5" fill="white" opacity="0.92"/><ellipse cx="98" cy="88" rx="19" ry="20" fill="white"/><ellipse cx="98" cy="89" rx="13" ry="14" fill="url(#s-tg-i)"/><ellipse cx="98" cy="90" rx="7.5" ry="9.5" fill="#140400"/><ellipse cx="90" cy="82" rx="7.5" ry="5.5" fill="white" opacity="0.92"/><ellipse cx="42" cy="107" rx="13" ry="9" fill="#E07060" opacity="0.18"/><ellipse cx="118" cy="107" rx="13" ry="9" fill="#E07060" opacity="0.18"/><path d="M75 113 Q80 107 85 113 Q80 120 75 113Z" fill="#B04800"/><path d="M73 122 Q80 128 87 122" stroke="#964000" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+        <img src="disc-d.webp" alt="老虎" class="disc-photo">
         <div class="aname">🐯 老虎</div>
         <div class="atype" style="color:#c53030">D 支配型</div>
       </div>
       <div class="animal-card disc-i" onclick="selectDiscType('I')">
-        <svg viewBox="0 0 160 178" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="s-pk-f" cx="44%" cy="36%" r="60%"><stop offset="0%" stop-color="#1A9898"/><stop offset="100%" stop-color="#0A5A60"/></radialGradient><radialGradient id="s-pk-i" cx="34%" cy="28%" r="62%"><stop offset="0%" stop-color="#00B490"/><stop offset="100%" stop-color="#005040"/></radialGradient></defs><line x1="80" y1="60" x2="80" y2="12" stroke="#007870" stroke-width="2.8" stroke-linecap="round"/><line x1="63" y1="64" x2="50" y2="16" stroke="#007870" stroke-width="2.2" stroke-linecap="round"/><line x1="97" y1="64" x2="110" y2="16" stroke="#007870" stroke-width="2.2" stroke-linecap="round"/><line x1="48" y1="72" x2="30" y2="28" stroke="#007870" stroke-width="1.8" stroke-linecap="round"/><line x1="112" y1="72" x2="130" y2="28" stroke="#007870" stroke-width="1.8" stroke-linecap="round"/><circle cx="80" cy="10" r="11" fill="#3ABFB8"/><circle cx="80" cy="10" r="7" fill="#6E44C0"/><circle cx="80" cy="10" r="4" fill="#FFD060"/><circle cx="80" cy="9" r="2" fill="#2A0860"/><circle cx="49" cy="14" r="8.5" fill="#3ABFB8"/><circle cx="49" cy="14" r="5.5" fill="#6E44C0"/><circle cx="49" cy="14" r="3" fill="#FFD060"/><circle cx="111" cy="14" r="8.5" fill="#3ABFB8"/><circle cx="111" cy="14" r="5.5" fill="#6E44C0"/><circle cx="111" cy="14" r="3" fill="#FFD060"/><circle cx="29" cy="26" r="7" fill="#3ABFB8"/><circle cx="29" cy="26" r="4.5" fill="#6E44C0"/><circle cx="29" cy="26" r="2.5" fill="#FFD060"/><circle cx="131" cy="26" r="7" fill="#3ABFB8"/><circle cx="131" cy="26" r="4.5" fill="#6E44C0"/><circle cx="131" cy="26" r="2.5" fill="#FFD060"/><ellipse cx="80" cy="114" rx="55" ry="54" fill="url(#s-pk-f)"/><ellipse cx="80" cy="130" rx="35" ry="27" fill="#C4F0EA"/><path d="M46 100 Q62 93 74 98" stroke="#007060" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/><path d="M86 98 Q98 93 114 100" stroke="#007060" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.58"/><ellipse cx="62" cy="108" rx="17" ry="18" fill="white"/><ellipse cx="62" cy="109" rx="12" ry="13" fill="url(#s-pk-i)"/><ellipse cx="62" cy="110" rx="7" ry="9" fill="#001810"/><ellipse cx="55" cy="102" rx="7" ry="5" fill="white" opacity="0.92"/><ellipse cx="98" cy="108" rx="17" ry="18" fill="white"/><ellipse cx="98" cy="109" rx="12" ry="13" fill="url(#s-pk-i)"/><ellipse cx="98" cy="110" rx="7" ry="9" fill="#001810"/><ellipse cx="91" cy="102" rx="7" ry="5" fill="white" opacity="0.92"/><ellipse cx="44" cy="126" rx="12" ry="8" fill="#F080B0" opacity="0.2"/><ellipse cx="116" cy="126" rx="12" ry="8" fill="#F080B0" opacity="0.2"/><path d="M75 132 L80 142 L85 132 Z" fill="#E8B830"/></svg>
+        <img src="disc-i.webp" alt="孔雀" class="disc-photo">
         <div class="aname">🦚 孔雀</div>
         <div class="atype" style="color:#0d9488">I 影響型</div>
       </div>
       <div class="animal-card disc-s" onclick="selectDiscType('S')">
-        <svg viewBox="0 0 180 160" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="s-kl-f" cx="42%" cy="36%" r="62%"><stop offset="0%" stop-color="#C0B8B0"/><stop offset="100%" stop-color="#887870"/></radialGradient><radialGradient id="s-kl-i" cx="34%" cy="28%" r="62%"><stop offset="0%" stop-color="#80684A"/><stop offset="100%" stop-color="#3A2010"/></radialGradient></defs><circle cx="26" cy="68" r="36" fill="#9A9490"/><circle cx="26" cy="68" r="24" fill="#B8B0A8"/><circle cx="26" cy="68" r="14" fill="#D0C8C0"/><circle cx="154" cy="68" r="36" fill="#9A9490"/><circle cx="154" cy="68" r="24" fill="#B8B0A8"/><circle cx="154" cy="68" r="14" fill="#D0C8C0"/><ellipse cx="90" cy="98" rx="58" ry="57" fill="url(#s-kl-f)"/><ellipse cx="90" cy="116" rx="34" ry="24" fill="#EDE8E2"/><path d="M58 84 Q72 76 84 82" stroke="#706058" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.55"/><path d="M96 82 Q108 76 122 84" stroke="#706058" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.55"/><ellipse cx="74" cy="93" rx="16" ry="17" fill="white"/><ellipse cx="74" cy="94" rx="11" ry="12" fill="url(#s-kl-i)"/><ellipse cx="74" cy="95" rx="6.5" ry="8.5" fill="#180800"/><ellipse cx="68" cy="87" rx="6.5" ry="5" fill="white" opacity="0.92"/><ellipse cx="106" cy="93" rx="16" ry="17" fill="white"/><ellipse cx="106" cy="94" rx="11" ry="12" fill="url(#s-kl-i)"/><ellipse cx="106" cy="95" rx="6.5" ry="8.5" fill="#180800"/><ellipse cx="100" cy="87" rx="6.5" ry="5" fill="white" opacity="0.92"/><ellipse cx="58" cy="112" rx="12" ry="8" fill="#D87060" opacity="0.18"/><ellipse cx="122" cy="112" rx="12" ry="8" fill="#D87060" opacity="0.18"/><ellipse cx="90" cy="117" rx="13" ry="10" fill="#5A3828"/><ellipse cx="90" cy="115" rx="8.5" ry="6" fill="#7A5040"/><path d="M84 128 Q90 134 96 128" stroke="#5A3828" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+        <img src="disc-s.webp" alt="無尾熊" class="disc-photo">
         <div class="aname">🐨 無尾熊</div>
         <div class="atype" style="color:#276749">S 穩健型</div>
       </div>
       <div class="animal-card disc-c" onclick="selectDiscType('C')">
-        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="s-ow-f" cx="42%" cy="36%" r="62%"><stop offset="0%" stop-color="#B89070"/><stop offset="100%" stop-color="#785040"/></radialGradient><radialGradient id="s-ow-d" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#FFF8EE"/><stop offset="100%" stop-color="#EDE0D0"/></radialGradient><radialGradient id="s-ow-i" cx="34%" cy="28%" r="64%"><stop offset="0%" stop-color="#F0A010"/><stop offset="100%" stop-color="#B06000"/></radialGradient></defs><path d="M44 48 Q46 26 56 20 Q60 32 52 52Z" fill="#8A6848"/><path d="M42 48 Q44 30 52 26 Q54 36 50 50Z" fill="#A88060"/><path d="M116 48 Q114 26 104 20 Q100 32 108 52Z" fill="#8A6848"/><path d="M118 48 Q116 30 108 26 Q106 36 110 50Z" fill="#A88060"/><ellipse cx="80" cy="94" rx="57" ry="57" fill="url(#s-ow-f)"/><ellipse cx="80" cy="96" rx="47" ry="47" fill="url(#s-ow-d)" opacity="0.88"/><ellipse cx="80" cy="96" rx="39" ry="39" fill="url(#s-ow-d)"/><circle cx="59" cy="94" r="22" fill="white"/><circle cx="59" cy="95" r="16" fill="url(#s-ow-i)"/><circle cx="59" cy="96" r="9" fill="#180800"/><ellipse cx="52" cy="87" rx="7.5" ry="5.5" fill="white" opacity="0.92"/><circle cx="101" cy="94" r="22" fill="white"/><circle cx="101" cy="95" r="16" fill="url(#s-ow-i)"/><circle cx="101" cy="96" r="9" fill="#180800"/><ellipse cx="94" cy="87" rx="7.5" ry="5.5" fill="white" opacity="0.92"/><path d="M74 114 L80 124 L86 114 Z" fill="#D89020"/></svg>
+        <img src="disc-c.webp" alt="貓頭鷹" class="disc-photo">
         <div class="aname">🦉 貓頭鷹</div>
         <div class="atype" style="color:#2b6cb0">C 分析型</div>
       </div>
@@ -468,7 +492,7 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
   <div class="result-header" id="r-header">
     <div class="combo-display">
       <div class="disc-badge-wrap">
-        <svg class="disc-svg" id="r-disc-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"></svg>
+        <img class="disc-result-photo" id="r-disc-img" src="" alt="">
       </div>
       <span class="combo-times">×</span>
       <svg class="belbin-svg" id="r-belbin-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -490,7 +514,7 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
       <div class="disc-profile-card">
         <div class="disc-card-inner">
           <div class="disc-card-mini-wrap">
-            <svg id="r-disc-mini" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:52px;height:52px"></svg>
+            <img id="r-disc-mini-img" class="disc-mini-photo" src="" alt="">
           </div>
           <div>
             <div class="disc-type-title" id="r-disc-title"></div>
@@ -529,6 +553,7 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
   <div class="btn-area">
     <button class="btn-share" onclick="shareResult()">📢 分享結果</button>
     <button class="btn-again" onclick="restartAll()">🔄 重新測驗</button>
+    <a href="lookup.html" style="display:block;text-align:center;font-size:0.85rem;color:#718096;font-weight:700;text-decoration:none;padding:4px 0;">🔍 輸入代碼查詢已有結果</a>
   </div>
 </div>
 
@@ -1120,10 +1145,9 @@ function showResult() {
 
   // Header
   document.getElementById('r-header').style.background = disc.grad;
-  document.getElementById('r-disc-svg').innerHTML = DISC_SVG_INNER[discType];
-  // Fix viewBox for I (taller SVG)
-  if (discType === 'I') document.getElementById('r-disc-svg').setAttribute('viewBox','0 0 160 178');
-  else document.getElementById('r-disc-svg').setAttribute('viewBox','0 0 160 160');
+  const animalSrc = {D:'disc-d.webp',I:'disc-i.webp',S:'disc-s.webp',C:'disc-c.webp'};
+  document.getElementById('r-disc-img').src = animalSrc[discType];
+  document.getElementById('r-disc-mini-img').src = animalSrc[discType];
   document.getElementById('r-belbin-svg').innerHTML = BELBIN_SVG_INNER[belbinRole];
   document.getElementById('r-emoji').textContent = combo.emoji;
   document.getElementById('r-combo-name').textContent = combo.name;
@@ -1134,9 +1158,6 @@ function showResult() {
   document.getElementById('r-combo-desc').textContent = combo.desc;
 
   // DISC profile
-  document.getElementById('r-disc-mini').innerHTML = DISC_SVG_INNER[discType];
-  if (discType === 'I') document.getElementById('r-disc-mini').setAttribute('viewBox','0 0 160 178');
-  else document.getElementById('r-disc-mini').setAttribute('viewBox','0 0 160 160');
   document.getElementById('r-disc-title').textContent = disc.emoji + ' ' + disc.name;
   document.getElementById('r-disc-sub').textContent = disc.badge;
   document.getElementById('r-disc-desc').textContent = disc.line + ' ' + disc.desc;
