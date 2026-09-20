@@ -934,6 +934,7 @@ function saveResult() {
   if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
   const disc   = DISC_ANIMALS[discType];
   const belbin = BELBIN_ROLES[belbinRole];
+  const combo  = COMBOS[discType + '-' + belbinRole];
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -946,7 +947,8 @@ function saveResult() {
       discType:      discType,
       discAnimal:    disc.name,
       belbinRole:    belbinRole,
-      belbinRoleName: belbin.name
+      belbinRoleName: belbin.name,
+      comboName:     combo ? combo.name : ''
     })
   }).catch(() => {});
 }
