@@ -75,6 +75,27 @@ body {
 .disc-result-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
 .combo-times { font-size: 2.2rem; color: rgba(255,255,255,0.5); font-weight: 200; }
 .belbin-char-img { width: 100px; height: 100px; object-fit: cover; object-position: center top; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.25); flex-shrink: 0; }
+.combo-portrait-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
+.combo-portrait-img {
+  width: 150px; height: auto; border-radius: 16px; display: block;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.5);
+  cursor: zoom-in;
+}
+.zoomable { cursor: zoom-in; }
+.lightbox-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(10,10,25,0.9);
+  z-index: 9999; align-items: center; justify-content: center; padding: 32px 20px;
+  cursor: zoom-out;
+}
+.lightbox-overlay.active { display: flex; }
+.lightbox-overlay img { max-width: 100%; max-height: 100%; border-radius: 16px; box-shadow: 0 20px 70px rgba(0,0,0,0.6); }
+.lightbox-close {
+  position: fixed; top: 18px; right: 22px; z-index: 10000;
+  background: rgba(255,255,255,0.15); color: white; border: none;
+  width: 40px; height: 40px; border-radius: 50%; font-size: 1.3rem;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+}
+.lightbox-close.active { display: flex; }
 .r-emoji { font-size: 2rem; margin-bottom: 4px; }
 .r-combo-name { font-size: 2rem; font-weight: 900; color: white; margin-bottom: 8px; }
 .r-type-labels { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
@@ -128,12 +149,15 @@ body {
   <div class="result-wrap" id="result-wrap">
     <div class="result-card">
       <div class="result-header" id="r-header">
+        <div class="combo-portrait-wrap">
+          <img class="combo-portrait-img zoomable" id="r-combo-img" src="" alt="" onclick="openLightbox(this.src)">
+        </div>
         <div class="combo-display">
           <div class="disc-badge-wrap">
-            <img class="disc-result-photo" id="r-disc-img" src="" alt="">
+            <img class="disc-result-photo zoomable" id="r-disc-img" src="" alt="" onclick="openLightbox(this.src)">
           </div>
           <span class="combo-times">×</span>
-          <img class="belbin-char-img" id="r-belbin-img" src="" alt="">
+          <img class="belbin-char-img zoomable" id="r-belbin-img" src="" alt="" onclick="openLightbox(this.src)">
         </div>
         <div class="r-emoji" id="r-emoji"></div>
         <div class="r-combo-name" id="r-combo-name"></div>
@@ -152,7 +176,7 @@ body {
           <div class="disc-card">
             <div class="disc-card-inner">
               <div class="disc-card-mini-wrap">
-                <img class="disc-mini-photo" id="r-disc-mini" src="" alt="">
+                <img class="disc-mini-photo zoomable" id="r-disc-mini" src="" alt="" onclick="openLightbox(this.src)">
               </div>
               <div>
                 <div class="disc-type-title" id="r-disc-title"></div>
@@ -166,7 +190,7 @@ body {
           <div class="section-title">👥 Belbin 團隊角色</div>
           <div class="belbin-card">
             <div class="belbin-card-header">
-              <img class="belbin-mini-img" id="r-belbin-mini" src="" alt="">
+              <img class="belbin-mini-img zoomable" id="r-belbin-mini" src="" alt="" onclick="openLightbox(this.src)">
               <div>
                 <div class="belbin-role-title" id="r-belbin-title"></div>
                 <div class="belbin-role-en" id="r-belbin-en"></div>
@@ -192,7 +216,23 @@ body {
 
 </div>
 
+<button class="lightbox-close" id="lightbox-close" onclick="closeLightbox()">✕</button>
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
+function openLightbox(src) {
+  if (!src) return;
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-overlay').classList.add('active');
+  document.getElementById('lightbox-close').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox-overlay').classList.remove('active');
+  document.getElementById('lightbox-close').classList.remove('active');
+}
+
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypRZPwAtwX6NkrPZYM8vJPPCY_3EliXdFHRHzL7GJ8330fUdakTrJ6qoQVa0YkSlEhrg/exec';
 
 const DISC_ANIMALS = {
@@ -330,6 +370,7 @@ function renderResult(data) {
   document.getElementById('r-disc-mini').src  = animalSrc[data.discType];
   document.getElementById('r-belbin-img').src  = belbinSrc;
   document.getElementById('r-belbin-mini').src = belbinSrc;
+  document.getElementById('r-combo-img').src   = 'combo-images/' + data.discType + '-' + data.belbinRole + '.webp';
 
   document.getElementById('r-emoji').textContent      = combo.emoji;
   document.getElementById('r-combo-name').textContent = combo.name;
