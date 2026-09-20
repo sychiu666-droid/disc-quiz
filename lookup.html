@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISC × Belbin 結果查詢</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a5e 0%, #3a2060 50%, #5a1040 100%);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 40px 16px;
+}
+.card {
+  background: white; border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  max-width: 480px; width: 100%;
+  padding: 40px 32px;
+}
+.logo { font-size: 3rem; text-align: center; margin-bottom: 14px; }
+h1 { font-size: 1.4rem; font-weight: 900; color: #1a202c; text-align: center; margin-bottom: 6px; }
+.sub { font-size: 0.88rem; color: #718096; text-align: center; margin-bottom: 28px; }
+label { display: block; font-size: 0.82rem; font-weight: 800; color: #4a5568; margin-bottom: 6px; }
+.input-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.input-row input {
+  flex: 1; padding: 13px 16px;
+  border: 2px solid #e2e8f0; border-radius: 12px;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: 4px;
+  color: #2d3748; font-family: 'Courier New', monospace;
+  outline: none; transition: border-color 0.15s; text-transform: uppercase;
+}
+.input-row input:focus { border-color: #667eea; }
+.btn-lookup {
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+  border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
+  white-space: nowrap; font-family: inherit;
+}
+.btn-lookup:hover { opacity: 0.9; }
+#result { margin-top: 6px; }
+.result-card {
+  background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+  border: 2px solid #c3dafe; border-radius: 16px;
+  padding: 22px;
+}
+.result-code { font-size: 1.6rem; font-weight: 900; letter-spacing: 6px; color: #3730a3; font-family: 'Courier New', monospace; margin-bottom: 14px; }
+.result-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: baseline; }
+.result-label { font-size: 0.78rem; font-weight: 800; color: #718096; min-width: 64px; }
+.result-val { font-size: 0.95rem; font-weight: 700; color: #2d3748; }
+.disc-chip { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.88rem; }
+.belbin-chip { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #fffbeb; color: #c05621; font-weight: 800; font-size: 0.88rem; border: 1.5px solid #fde68a; }
+.not-found { color: #e53e3e; font-size: 0.9rem; font-weight: 700; padding: 16px; text-align: center; background: #fff5f5; border-radius: 12px; }
+.loading { color: #718096; font-size: 0.9rem; text-align: center; padding: 16px; }
+.back-link { display: block; text-align: center; margin-top: 20px; font-size: 0.85rem; color: #667eea; text-decoration: none; font-weight: 700; }
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🔍</div>
+  <h1>查詢你的測驗結果</h1>
+  <p class="sub">輸入做完測驗後拿到的 8 位英數字代碼</p>
+
+  <label>專屬代碼</label>
+  <div class="input-row">
+    <input type="text" id="code-input" maxlength="8" placeholder="XXXXXXXX"
+           oninput="this.value=this.value.toUpperCase()"
+           onkeydown="if(event.key==='Enter') lookup()">
+    <button class="btn-lookup" onclick="lookup()">查詢</button>
+  </div>
+
+  <div id="result"></div>
+
+  <a class="back-link" href="disc_belbin_quiz.html">← 回到測驗</a>
+</div>
+
+<script>
+// 填入與 disc_belbin_quiz.html 相同的 Apps Script 網址
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+const DISC_COLOR = {
+  D: { bg:'#fff5f5', color:'#c53030', label:'D 老虎｜支配型' },
+  I: { bg:'#e6fffa', color:'#0d9488', label:'I 孔雀｜影響型' },
+  S: { bg:'#f0fff4', color:'#276749', label:'S 無尾熊｜穩健型' },
+  C: { bg:'#ebf8ff', color:'#2b6cb0', label:'C 貓頭鷹｜分析型' }
+};
+
+function lookup() {
+  const code = document.getElementById('code-input').value.trim().toUpperCase();
+  if (code.length < 6) { showResult(null, '請輸入代碼'); return; }
+
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    showResult(null, '尚未設定查詢服務，請聯絡老師。');
+    return;
+  }
+
+  document.getElementById('result').innerHTML = '<p class="loading">查詢中…</p>';
+
+  // JSONP 查詢（繞過 CORS）
+  const cbName = '_lkCb' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    if (s.parentNode) s.parentNode.removeChild(s);
+    showResult(data);
+  };
+  const s = document.createElement('script');
+  s.src = APPS_SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&callback=' + cbName;
+  s.onerror = function() {
+    delete window[cbName];
+    showResult(null, '查詢失敗，請稍後再試。');
+  };
+  document.head.appendChild(s);
+  setTimeout(function() {
+    if (window[cbName]) { window[cbName]({ found: false }); }
+  }, 10000);
+}
+
+function showResult(data, errMsg) {
+  const el = document.getElementById('result');
+  if (errMsg) { el.innerHTML = '<div class="not-found">' + errMsg + '</div>'; return; }
+  if (!data || !data.found) {
+    el.innerHTML = '<div class="not-found">找不到這組代碼，請確認是否輸入正確。</div>';
+    return;
+  }
+  const disc = DISC_COLOR[data.discType] || { bg:'#f7fafc', color:'#4a5568', label:data.discType };
+  el.innerHTML = `
+    <div class="result-card">
+      <div class="result-code">${data.code}</div>
+      <div class="result-row"><span class="result-label">姓名</span><span class="result-val">${data.name}</span></div>
+      <div class="result-row"><span class="result-label">課程</span><span class="result-val">${data.course}</span></div>
+      <div class="result-row"><span class="result-label">班級</span><span class="result-val">${data.className}</span></div>
+      <div class="result-row"><span class="result-label">學號</span><span class="result-val">${data.studentId}</span></div>
+      <div class="result-row"><span class="result-label">DISC</span>
+        <span class="disc-chip" style="background:${disc.bg};color:${disc.color}">${disc.label}</span>
+      </div>
+      <div class="result-row"><span class="result-label">Belbin</span>
+        <span class="belbin-chip">${data.belbinRoleName}（${data.belbinRole}）</span>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>

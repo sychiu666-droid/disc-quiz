@@ -269,13 +269,82 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
   .r-combo-name { font-size: 1.6rem; }
   .result-body { padding: 20px; }
 }
+
+/* ── ENTRY FORM ── */
+#screen-entry { padding: 40px 32px 36px; text-align: center; }
+#screen-entry h2 { font-size: 1.5rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
+.entry-sub { font-size: 0.9rem; color: #718096; margin-bottom: 28px; line-height: 1.6; }
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 800; color: #4a5568; margin-bottom: 6px; letter-spacing: 0.5px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid #e2e8f0; border-radius: 12px;
+  font-size: 0.95rem; color: #2d3748;
+  background: white; outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit; appearance: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: #667eea; }
+.select-wrap { position: relative; }
+.select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #718096; pointer-events: none; }
+.btn-start {
+  display: block; width: 100%; padding: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+  border-radius: 14px; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+  margin-top: 8px; transition: all 0.15s; font-family: inherit;
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.35); }
+
+/* ── RESULT CODE ── */
+.code-card {
+  background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+  border: 2px dashed #c3dafe; border-radius: 16px;
+  padding: 22px; text-align: center;
+}
+.code-display {
+  font-size: 2.2rem; font-weight: 900; letter-spacing: 10px;
+  color: #3730a3; font-family: 'Courier New', monospace; margin-bottom: 10px;
+}
+.code-hint { font-size: 0.82rem; color: #718096; line-height: 1.5; }
+.code-student-info { font-size: 0.85rem; color: #4a5568; margin-bottom: 12px; }
 </style>
 </head>
 <body>
 <div class="container">
 
+<!-- ── ENTRY FORM ── -->
+<div id="screen-entry" class="screen active">
+  <div class="logo-row">🐯🦚🐨🦉</div>
+  <h2>DISC × Belbin 雙重人格探索</h2>
+  <p class="entry-sub">請先填寫基本資料，完成後進入測驗</p>
+  <div class="form-group">
+    <label>課程 *</label>
+    <div class="select-wrap">
+      <select id="f-course">
+        <option value="">請選擇課程…</option>
+        <option value="星期一(DCL)">星期一(DCL)</option>
+        <option value="星期二(UNI)">星期二(UNI)</option>
+        <option value="星期四(CIV)">星期四(CIV)</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>班級 *</label>
+    <input type="text" id="f-class" placeholder="例如：三年甲班">
+  </div>
+  <div class="form-group">
+    <label>學號 *</label>
+    <input type="text" id="f-student-id" placeholder="請輸入學號">
+  </div>
+  <div class="form-group">
+    <label>姓名 *</label>
+    <input type="text" id="f-name" placeholder="請輸入姓名">
+  </div>
+  <button class="btn-start" onclick="submitEntry()">開始測驗 →</button>
+</div>
+
 <!-- ── WELCOME ── -->
-<div id="screen-welcome" class="screen active">
+<div id="screen-welcome" class="screen">
   <div class="logo-row">🐯🦚🐨🦉</div>
   <h1>DISC × Belbin</h1>
   <p class="subtitle">雙重人格探索<br>了解你的個性特質 × 最適合的團隊角色</p>
@@ -447,6 +516,14 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
     <div class="section">
       <div class="section-title">⭐ 核心特質</div>
       <div class="traits-wrap" id="r-traits"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">🔑 你的專屬代碼</div>
+      <div class="code-card">
+        <div class="code-student-info" id="r-student-info"></div>
+        <div class="code-display" id="r-result-code">──</div>
+        <p class="code-hint">請記下或截圖這組代碼<br>之後可到查詢頁輸入代碼，找回你的結果</p>
+      </div>
     </div>
   </div>
   <div class="btn-area">
@@ -783,8 +860,16 @@ const BELBIN_QS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
+// 填寫 Apps Script 網址後即可自動儲存結果至 Google Sheets
+// ═══════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+// ═══════════════════════════════════════════════════════════════
 // 狀態
 // ═══════════════════════════════════════════════════════════════
+let studentData = { course: '', className: '', studentId: '', name: '' };
+let resultCode = '';
+
 let discType = null;
 let belbinRole = null;
 let belbinScores = { SH:0, IM:0, CF:0, CO:0, TW:0, RI:0, PL:0, ME:0, SP:0 };
@@ -803,6 +888,42 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Entry Form ─────────────────────────────────────────────────
+function submitEntry() {
+  const course = document.getElementById('f-course').value.trim();
+  const cls    = document.getElementById('f-class').value.trim();
+  const sid    = document.getElementById('f-student-id').value.trim();
+  const name   = document.getElementById('f-name').value.trim();
+  if (!course || !cls || !sid || !name) {
+    alert('請填寫所有欄位後再繼續。');
+    return;
+  }
+  studentData = { course, className: cls, studentId: sid, name };
+  showScreen('screen-welcome');
+}
+
+// ── Save Result ────────────────────────────────────────────────
+function saveResult() {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  const disc   = DISC_ANIMALS[discType];
+  const belbin = BELBIN_ROLES[belbinRole];
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      code:          resultCode,
+      course:        studentData.course,
+      className:     studentData.className,
+      studentId:     studentData.studentId,
+      name:          studentData.name,
+      discType:      discType,
+      discAnimal:    disc.name,
+      belbinRole:    belbinRole,
+      belbinRoleName: belbin.name
+    })
+  }).catch(() => {});
 }
 
 // ── Navigation ─────────────────────────────────────────────────
@@ -977,6 +1098,9 @@ const BELBIN_TIEBREAK = {
 };
 
 function showResult() {
+  // 產生亂數代碼
+  resultCode = Math.random().toString(36).substr(2, 8).toUpperCase();
+
   // 用「得分率 = 實際分數 ÷ 理論最高分」正規化，消除各角色出現頻率不同的先天偏差
   const rates = {};
   Object.keys(belbinScores).forEach(r => {
@@ -1040,6 +1164,14 @@ function showResult() {
   bcat.innerHTML = `<span>👥</span>${belbin.cat}`;
   tw.appendChild(bcat);
 
+  // 顯示代碼與學生資訊
+  document.getElementById('r-result-code').textContent = resultCode;
+  document.getElementById('r-student-info').textContent =
+    studentData.name + '　' + studentData.course + '　' + studentData.className + '　' + studentData.studentId;
+
+  // 儲存至 Google Sheets
+  saveResult();
+
   // Show result
   document.getElementById('screen-result').style.display = 'block';
   showScreen('screen-result');
@@ -1058,10 +1190,11 @@ function shareResult() {
 }
 
 function restartAll() {
-  discType = null; belbinRole = null;
+  discType = null; belbinRole = null; resultCode = '';
   discScores = {D:0,I:0,S:0,C:0};
   belbinScores = { SH:0, IM:0, CF:0, CO:0, TW:0, RI:0, PL:0, ME:0, SP:0 };
   document.getElementById('screen-result').style.display = 'none';
+  // 回到路徑選擇，保留學生資料
   showScreen('screen-welcome');
 }
 </script>
