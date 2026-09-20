@@ -155,6 +155,7 @@ h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
   padding: 12px 20px; margin: 16px 0 24px; font-weight: 800; color: #4c51bf;
 }
 .disc-result-mini svg { width: 48px; height: 48px; }
+.disc-result-mini img.trans-photo { width: 52px; height: 52px; object-fit: cover; object-position: center 20%; border-radius: 50%; flex-shrink: 0; }
 .btn-continue {
   background: linear-gradient(135deg, #f6ad55, #e53e3e);
   color: white; border: none; padding: 15px 48px;
@@ -489,7 +490,7 @@ img.disc-mini-photo {
   <div class="trans-title">DISC 完成！</div>
   <div class="trans-sub">你的 DISC 類型是</div>
   <div class="disc-result-mini" id="trans-result">
-    <span id="trans-svg"></span>
+    <img id="trans-photo" class="trans-photo zoomable" src="" alt="" onclick="openLightbox(this.src)">
     <span id="trans-label"></span>
   </div>
   <p class="trans-sub">接下來，進行 20 題 <strong>Belbin 團隊角色</strong>測驗<br>找出你在團隊中最發光的位置！</p>
@@ -1093,8 +1094,8 @@ function finishDisc() {
   discType = winners.length === 1 ? winners[0] : winners[Math.floor(Math.random()*winners.length)];
   // Show transition screen
   const a = DISC_ANIMALS[discType];
-  const transEl = document.getElementById('trans-svg');
-  transEl.innerHTML = `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px">${DISC_SVG_INNER[discType]}</svg>`;
+  const animalSrc = {D:'disc-d.webp',I:'disc-i.webp',S:'disc-s.webp',C:'disc-c.webp'};
+  document.getElementById('trans-photo').src = animalSrc[discType];
   document.getElementById('trans-label').textContent = a.emoji + ' ' + a.name + '（' + a.badge + '）';
   showScreen('screen-transition');
 }
