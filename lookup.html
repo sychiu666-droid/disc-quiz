@@ -411,6 +411,16 @@ function renderResult(data) {
   document.getElementById('result-wrap').classList.add('visible');
   document.getElementById('result-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// 支援分享連結 ?code=XXXXXXXX 自動帶入並查詢
+(function autoLookupFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const code = (params.get('code') || '').trim().toUpperCase();
+  if (code) {
+    document.getElementById('code-input').value = code;
+    lookup();
+  }
+})();
 </script>
 </body>
 </html>

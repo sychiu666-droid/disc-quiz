@@ -1263,11 +1263,12 @@ function shareResult() {
   const combo = COMBOS[discType + '-' + belbinRole];
   const disc = DISC_ANIMALS[discType];
   const belbin = BELBIN_ROLES[belbinRole];
-  const text = `我的 DISC × Belbin 結果是「${combo.name}」${combo.emoji}\n${disc.emoji} ${disc.name} × ${belbin.name}\n${combo.desc}`;
+  const shareUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lookup.html?code=' + resultCode;
+  const text = `我的 DISC × Belbin 結果是「${combo.name}」${combo.emoji}\n${disc.emoji} ${disc.name} × ${belbin.name}\n${combo.desc}\n\n專屬代碼：${resultCode}`;
   if (navigator.share) {
-    navigator.share({ title:'DISC × Belbin 雙重人格探索', text });
+    navigator.share({ title:'DISC × Belbin 雙重人格探索', text, url: shareUrl });
   } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => alert('結果已複製到剪貼簿！'));
+    navigator.clipboard.writeText(text + '\n查詢連結：' + shareUrl).then(() => alert('結果已複製到剪貼簿！'));
   }
 }
 
