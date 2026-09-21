@@ -996,6 +996,7 @@ function saveResult() {
     method: 'POST',
     mode: 'no-cors',
     body: JSON.stringify({
+      quiz:          'belbin',
       code:          resultCode,
       course:        studentData.course,
       className:     studentData.className,
@@ -1263,7 +1264,7 @@ function shareResult() {
   const combo = COMBOS[discType + '-' + belbinRole];
   const disc = DISC_ANIMALS[discType];
   const belbin = BELBIN_ROLES[belbinRole];
-  const shareUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lookup.html?code=' + resultCode;
+  const shareUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lookup.html?code=' + resultCode + '&quiz=belbin';
   const text = `我的 DISC × Belbin 結果是「${combo.name}」${combo.emoji}\n${disc.emoji} ${disc.name} × ${belbin.name}\n${combo.desc}\n\n專屬代碼：${resultCode}`;
   if (navigator.share) {
     navigator.share({ title:'DISC × Belbin 雙重人格探索', text, url: shareUrl });

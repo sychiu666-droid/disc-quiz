@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISC × 學習風格雙重探索</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a5e 0%, #3a2060 50%, #5a1040 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.container {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  max-width: 680px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── WELCOME ── */
+#screen-welcome { padding: 44px 36px 40px; text-align: center; }
+.logo-row { font-size: 52px; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+h1 { font-size: 1.8rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
+.subtitle { font-size: 0.95rem; color: #718096; margin-bottom: 28px; line-height: 1.7; }
+.divider-label {
+  font-size: 0.78rem; font-weight: 800; letter-spacing: 1.5px;
+  color: #a0aec0; margin: 8px 0 18px; text-transform: uppercase;
+}
+.path-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+.path-card {
+  border: 2px solid #e2e8f0; border-radius: 18px;
+  padding: 20px 22px; text-align: left; cursor: pointer;
+  background: white; transition: all 0.18s;
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.path-card:hover { border-color: #667eea; background: #f7f8ff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.18); }
+.path-icon { font-size: 2.2rem; flex-shrink: 0; }
+.path-text .path-title { font-size: 1.05rem; font-weight: 800; color: #2d3748; margin-bottom: 4px; }
+.path-text .path-desc { font-size: 0.85rem; color: #718096; line-height: 1.5; }
+.path-card.path-a { border-color: #e9d8fd; background: #faf5ff; }
+.path-card.path-a:hover { border-color: #b794f4; background: #f3e8ff; }
+.path-card.path-b { border-color: #bee3f8; background: #ebf8ff; }
+.path-card.path-b:hover { border-color: #63b3ed; background: #dbeafe; }
+.badge-row {
+  display: flex; justify-content: center; gap: 10px;
+  margin-bottom: 24px; flex-wrap: wrap;
+}
+.mini-chip {
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 700;
+}
+
+/* ── DISC SELECT ── */
+#screen-disc-select { padding: 36px 28px 32px; text-align: center; }
+.select-title { font-size: 1.4rem; font-weight: 900; color: #2d3748; margin-bottom: 8px; }
+.select-sub { font-size: 0.88rem; color: #718096; margin-bottom: 28px; }
+.animal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.animal-card {
+  border: 2.5px solid #e2e8f0; border-radius: 20px;
+  padding: 22px 16px; cursor: pointer; background: white;
+  text-align: center; transition: all 0.18s;
+}
+.animal-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.animal-card .aname { font-size: 1.05rem; font-weight: 900; color: #2d3748; }
+.animal-card .atype { font-size: 0.78rem; font-weight: 700; margin-top: 2px; }
+.animal-card.disc-d { border-color: #fc8181; }
+.animal-card.disc-d:hover { background: #fff5f5; border-color: #e53e3e; }
+.animal-card.disc-i { border-color: #4fd1c5; }
+.animal-card.disc-i:hover { background: #e6fffa; border-color: #0d9488; }
+.animal-card.disc-s { border-color: #68d391; }
+.animal-card.disc-s:hover { background: #f0fff4; border-color: #38a169; }
+.animal-card.disc-c { border-color: #63b3ed; }
+.animal-card.disc-c:hover { background: #ebf8ff; border-color: #2b6cb0; }
+
+/* ── QUIZ (shared: DISC & 學習風格) ── */
+.quiz-top {
+  padding: 18px 26px 14px;
+  border-bottom: 1px solid #e8ecf4;
+  background: #fafbff;
+}
+.q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.q-label { font-size: 0.78rem; font-weight: 700; color: #718096; }
+.q-num   { font-size: 0.78rem; font-weight: 700; color: #667eea; }
+.progress-wrap { position: relative; }
+.progress-bar { background: #e2e8f0; border-radius: 999px; height: 7px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 999px; transition: width 0.35s ease; }
+.pf-disc { background: linear-gradient(90deg, #667eea, #764ba2); }
+.pf-style { background: linear-gradient(90deg, #f6ad55, #e53e3e); }
+.quiz-body { padding: 26px; }
+.q-prompt { font-size: 0.78rem; color: #a0aec0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.q-title { font-size: 1.15rem; font-weight: 800; color: #2d3748; margin-bottom: 20px; line-height: 1.45; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.opt-card {
+  border: 2px solid #e2e8f0; border-radius: 14px;
+  padding: 16px 12px; text-align: center; cursor: pointer; background: white;
+  transition: all 0.15s; display: flex; flex-direction: column; align-items: center;
+  gap: 7px; min-height: 80px; justify-content: center;
+}
+.opt-card:hover { border-color:#667eea; background:#f7f8ff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(102,126,234,0.15); }
+.opt-card.selected { border-color:#5a67d8; background:linear-gradient(135deg,#eef2ff,#f5f0ff); box-shadow:0 0 0 3px rgba(102,126,234,0.15); }
+.opt-card.selected .opt-letter { background:#5a67d8; color:white; }
+.opt-letter {
+  width:26px; height:26px; border-radius:50%;
+  background:#edf2f7; color:#4a5568; font-size:0.75rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s;
+}
+.opt-word { font-size:0.95rem; font-weight:700; color:#2d3748; line-height:1.3; }
+.options-list { display: flex; flex-direction: column; gap: 10px; }
+.opt-row {
+  display:flex; align-items:center; gap:13px; padding:14px 15px;
+  border:2px solid #e2e8f0; border-radius:13px; background:white;
+  cursor:pointer; text-align:left; transition:all 0.15s;
+}
+.opt-row:hover { border-color:#667eea; background:#f7f8ff; transform:translateX(4px); }
+.opt-row.selected { border-color:#5a67d8; background:linear-gradient(135deg,#eef2ff,#f5f0ff); box-shadow:0 0 0 3px rgba(102,126,234,0.12); }
+.opt-row.selected .opt-letter { background:#5a67d8; color:white; }
+.opt-icon-box { width:36px; height:36px; border-radius:9px; background:#f0f2ff; display:flex; align-items:center; justify-content:center; font-size:1.15rem; flex-shrink:0; }
+.opt-sentence { font-size:0.92rem; font-weight:600; color:#2d3748; line-height:1.4; }
+.btn-next {
+  display:block; width:100%; margin-top:20px; padding:13px;
+  background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none;
+  border-radius:13px; font-size:1rem; font-weight:800; cursor:pointer;
+  transition:all 0.15s; opacity:0.35; pointer-events:none;
+}
+.btn-next.active { opacity:1; pointer-events:auto; }
+.btn-next.active:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(102,126,234,0.35); }
+.phase-tag {
+  display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 1px;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+}
+.phase-disc  { background: #eef2ff; color: #5a67d8; }
+.phase-style { background: #fff8e6; color: #c05621; }
+
+/* ── 學習風格測驗：四象限 + 縮成光球拖曳 ── */
+.swipe-stage {
+  position: relative; width: 100%; max-width: 340px;
+  aspect-ratio: 1; margin: 14px auto 8px;
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px;
+}
+.swipe-zone {
+  border-radius: 18px; background: #f0f2ff; color: #4a5568;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 12px 10px; text-align: center;
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), background 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
+  cursor: pointer; user-select: none;
+}
+.swipe-zone .zone-icon { font-size: 1.9rem; line-height: 1; transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); }
+.swipe-zone .zone-label { font-size: 0.84rem; font-weight: 800; line-height: 1.35; }
+.swipe-zone.active {
+  background: linear-gradient(135deg,#6f7ff0,#8457d6); color: white;
+  transform: scale(1.045); box-shadow: 0 14px 30px rgba(102,126,234,0.45);
+}
+.swipe-zone.active .zone-icon { transform: scale(1.15) translateY(-2px); }
+.swipe-card {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 208px; min-height: 116px;
+  background: white; border: 2px solid #e2e8f0; border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px 16px; text-align: center;
+  font-size: 0.92rem; font-weight: 700; color: #2d3748; line-height: 1.5;
+  cursor: grab; touch-action: none; z-index: 5;
+  transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1), height 0.4s cubic-bezier(0.34,1.56,0.64,1),
+              min-height 0.4s cubic-bezier(0.34,1.56,0.64,1), border-radius 0.35s cubic-bezier(0.22,1,0.36,1),
+              padding 0.3s ease, font-size 0.16s ease, color 0.16s ease,
+              box-shadow 0.35s ease, background 0.35s ease, border-color 0.3s ease;
+}
+.swipe-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%);
+  opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+}
+.swipe-card.shrunk {
+  width: 54px; height: 54px; min-height: 54px; border-radius: 16px; padding: 0; font-size: 0; color: transparent;
+  background: linear-gradient(150deg, #9aa7ff 0%, #6f7ff0 42%, #7c4fd6 78%, #5b3aa8 100%);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 0 0 5px rgba(124,79,214,0.14), 0 0 22px 4px rgba(124,79,214,0.45),
+              0 10px 22px rgba(59,38,110,0.35), inset 0 1px 1px rgba(255,255,255,0.55);
+}
+.swipe-card.shrunk::before { opacity: 1; }
+.swipe-card.grabbing { cursor: grabbing; }
+.swipe-card.grabbing.shrunk {
+  animation: orbPulse 1.2s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(124,79,214,0.14), 0 0 22px 4px rgba(124,79,214,0.45), 0 10px 22px rgba(59,38,110,0.35), inset 0 1px 1px rgba(255,255,255,0.55); }
+  50% { box-shadow: 0 0 0 8px rgba(124,79,214,0.2), 0 0 30px 8px rgba(124,79,214,0.6), 0 10px 22px rgba(59,38,110,0.35), inset 0 1px 1px rgba(255,255,255,0.55); }
+}
+.swipe-card.flying { transition: transform 0.32s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease; }
+.swipe-card.reentering { transition: transform 0.34s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease; }
+.swipe-hint { text-align: center; font-size: 0.78rem; color: #a0aec0; font-weight: 600; margin-top: 4px; }
+
+/* ── TRANSITION SCREEN ── */
+#screen-transition { padding: 60px 36px; text-align: center; }
+.trans-icon { font-size: 64px; margin-bottom: 16px; animation: float 2.5s ease-in-out infinite; }
+.trans-title { font-size: 1.6rem; font-weight: 900; color: #2d3748; margin-bottom: 10px; }
+.trans-sub { font-size: 0.95rem; color: #718096; line-height: 1.7; margin-bottom: 10px; }
+.disc-result-mini {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #f7f8ff; border: 2px solid #c3dafe; border-radius: 16px;
+  padding: 12px 20px; margin: 16px 0 24px; font-weight: 800; color: #4c51bf;
+}
+.disc-result-mini img.trans-photo { width: 52px; height: 52px; object-fit: cover; object-position: center 20%; border-radius: 50%; flex-shrink: 0; }
+.btn-continue {
+  background: linear-gradient(135deg, #f6ad55, #e53e3e);
+  color: white; border: none; padding: 15px 48px;
+  font-size: 1.05rem; font-weight: 800; border-radius: 50px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(229,62,62,0.35); transition: all 0.15s;
+}
+.btn-continue:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(229,62,62,0.45); }
+
+/* ── RESULT ── */
+#screen-result { display: none; }
+.result-header {
+  padding: 36px 28px 32px; text-align: center; position: relative; overflow: hidden;
+}
+.result-header::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.08);
+}
+.result-header::after {
+  content: ''; position: absolute; bottom: -40px; left: -20px;
+  width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.06);
+}
+.combo-portrait-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+img.combo-portrait-img {
+  width: 100%; max-width: 400px; height: auto; aspect-ratio: 654/434;
+  border-radius: 16px; display: block; object-fit: cover;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.5);
+  cursor: zoom-in;
+}
+.combo-display {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-bottom: 18px; flex-wrap: wrap;
+}
+.disc-badge-wrap {
+  width: 122px; height: 122px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.22), 0 0 0 3px rgba(255,255,255,0.45);
+  flex-shrink: 0;
+}
+.style-badge-wrap {
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.22), 0 0 0 3px rgba(255,255,255,0.45);
+  flex-shrink: 0;
+  cursor: zoom-in;
+}
+.style-badge-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 33%; }
+.style-mini-wrap {
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  cursor: zoom-in;
+}
+.style-mini-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 33%; }
+.combo-times { font-size: 2.2rem; color: rgba(255,255,255,0.5); font-weight: 200; }
+img.disc-result-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
+.zoomable { cursor: zoom-in; }
+.lightbox-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(10,10,25,0.9);
+  z-index: 9999; align-items: center; justify-content: center; padding: 32px 20px;
+  cursor: zoom-out;
+}
+.lightbox-overlay.active { display: flex; }
+.lightbox-frame {
+  width: min(92vw, 520px); height: 82vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.lightbox-frame img {
+  width: 100%; height: 100%; object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 20px 70px rgba(0,0,0,0.6);
+}
+.lightbox-close {
+  position: fixed; top: 18px; right: 22px; z-index: 10000;
+  background: rgba(255,255,255,0.15); color: white; border: none;
+  width: 40px; height: 40px; border-radius: 50%; font-size: 1.3rem;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+}
+.lightbox-close.active { display: flex; }
+.r-emoji { font-size: 2rem; margin-bottom: 4px; }
+.r-combo-name { font-size: 2rem; font-weight: 900; color: white; margin-bottom: 8px; }
+.r-type-labels { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 0; }
+.r-type-label {
+  background: rgba(255,255,255,0.18); color: white; border-radius: 20px;
+  padding: 5px 14px; font-size: 0.82rem; font-weight: 700;
+}
+.result-body { padding: 28px; }
+.section { margin-bottom: 26px; }
+.section-title {
+  font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: #718096; margin-bottom: 14px;
+}
+.combo-desc-card {
+  background: linear-gradient(135deg, #f8faff, #fff8f5);
+  border: 1.5px solid #e5e9f5; border-radius: 16px;
+  padding: 18px 20px; font-size: 1rem; color: #2d3748;
+  line-height: 1.75; font-weight: 500;
+}
+.traits-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
+.trait-pill {
+  background: #f0f4ff; color: #4a5568; border-radius: 20px;
+  padding: 6px 14px; font-size: 0.85rem; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+}
+.style-card {
+  border: 1.5px solid #fde68a; border-radius: 16px;
+  padding: 16px 18px; background: linear-gradient(135deg, #fffbeb, #fff8e6);
+}
+.style-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.style-role-title { font-size: 1.05rem; font-weight: 900; color: #1a202c; }
+.style-role-en { font-size: 0.75rem; color: #a0aec0; }
+.style-role-desc { font-size: 0.9rem; color: #4a5568; line-height: 1.7; }
+.disc-profile-card {
+  border: 1.5px solid #c3dafe; border-radius: 16px;
+  padding: 16px 18px; background: linear-gradient(135deg, #ebf8ff, #f0f4ff);
+}
+.disc-card-inner { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.disc-card-mini-wrap {
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+}
+.disc-type-title { font-size: 1.05rem; font-weight: 900; color: #1a202c; }
+.disc-type-sub { font-size: 0.75rem; color: #a0aec0; }
+.disc-type-desc { font-size: 0.9rem; color: #4a5568; line-height: 1.7; }
+.btn-area { display: flex; flex-direction: column; gap: 10px; padding: 0 28px 32px; }
+.btn-again {
+  display: block; width: 100%; padding: 14px;
+  background: white; color: #5a67d8; border: 2.5px solid #c3dafe;
+  border-radius: 14px; font-size: 1rem; font-weight: 800; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-again:hover { background: #eef2ff; transform: translateY(-1px); }
+.btn-share {
+  display: block; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+  border-radius: 14px; font-size: 1rem; font-weight: 800; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.35); }
+
+@media (max-width: 480px) {
+  #screen-welcome { padding: 32px 20px 28px; }
+  h1 { font-size: 1.5rem; }
+  .animal-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .r-combo-name { font-size: 1.6rem; }
+  .result-body { padding: 20px; }
+  .swipe-card { width: 168px; min-height: 96px; font-size: 0.82rem; padding: 14px 12px; }
+  .swipe-zone .zone-icon { font-size: 1.6rem; }
+  .swipe-zone .zone-label { font-size: 0.78rem; }
+}
+
+/* ── ENTRY FORM ── */
+#screen-entry { padding: 40px 32px 36px; text-align: center; }
+#screen-entry h2 { font-size: 1.5rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
+.entry-sub { font-size: 0.9rem; color: #718096; margin-bottom: 28px; line-height: 1.6; }
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 800; color: #4a5568; margin-bottom: 6px; letter-spacing: 0.5px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid #e2e8f0; border-radius: 12px;
+  font-size: 0.95rem; color: #2d3748;
+  background: white; outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit; appearance: none;
+}
+.form-group input:focus, .form-group select:focus { border-color: #667eea; }
+.select-wrap { position: relative; }
+.select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #718096; pointer-events: none; }
+.btn-start {
+  display: block; width: 100%; padding: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;
+  border-radius: 14px; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+  margin-top: 8px; transition: all 0.15s; font-family: inherit;
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.35); }
+
+/* ── DISC BANNER & ANIMAL IMAGES ── */
+.disc-banner-img {
+  width: 100%; display: block; border-radius: 20px 20px 0 0;
+  aspect-ratio: 3/2; object-fit: cover; object-position: center center;
+}
+.animal-card img.disc-photo {
+  width: 100%; height: 140px; object-fit: cover;
+  object-position: center 20%; border-radius: 12px; margin-bottom: 10px;
+  display: block;
+}
+img.disc-mini-photo {
+  width: 60px; height: 60px; object-fit: cover;
+  object-position: center 20%; border-radius: 50%;
+}
+
+/* ── RESULT CODE ── */
+.code-card {
+  background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+  border: 2px dashed #c3dafe; border-radius: 16px;
+  padding: 22px; text-align: center;
+}
+.code-display {
+  font-size: 2.2rem; font-weight: 900; letter-spacing: 10px;
+  color: #3730a3; font-family: 'Courier New', monospace; margin-bottom: 10px;
+}
+.code-hint { font-size: 0.82rem; color: #718096; line-height: 1.5; }
+.code-student-info { font-size: 0.85rem; color: #4a5568; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ── ENTRY FORM ── -->
+<div id="screen-entry" class="screen active">
+  <img src="learning-banner.webp" alt="DISC × 學習風格" class="disc-banner-img">
+  <div style="padding: 24px 32px 0">
+  <h2>DISC × 學習風格雙重探索</h2>
+  <p class="entry-sub">請先填寫基本資料，完成後進入測驗</p>
+  <div class="form-group">
+    <label>課程 *</label>
+    <div class="select-wrap">
+      <select id="f-course">
+        <option value="">請選擇課程…</option>
+        <option value="星期一(DCL)">星期一(DCL)</option>
+        <option value="星期二(UNI)">星期二(UNI)</option>
+        <option value="星期四(CIV)">星期四(CIV)</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>班級 *</label>
+    <input type="text" id="f-class" placeholder="例如：三年甲班">
+  </div>
+  <div class="form-group">
+    <label>學號 *</label>
+    <input type="text" id="f-student-id" placeholder="請輸入學號">
+  </div>
+  <div class="form-group">
+    <label>姓名 *</label>
+    <input type="text" id="f-name" placeholder="請輸入姓名">
+  </div>
+  <button class="btn-start" onclick="submitEntry()">開始測驗 →</button>
+  <a href="lookup.html" style="display:block;text-align:center;margin-top:16px;font-size:0.85rem;color:#718096;font-weight:700;text-decoration:none;">🔍 已有代碼，查詢我的結果</a>
+  </div>
+</div>
+
+<!-- ── WELCOME ── -->
+<div id="screen-welcome" class="screen">
+  <img src="learning-banner.webp" alt="DISC × 學習風格" class="disc-banner-img">
+  <div style="padding: 20px 36px 0; text-align:center">
+  <h1>DISC × 學習風格</h1>
+  <p class="subtitle">雙重探索<br>了解你的個性特質 × 最順手的學習方式</p>
+
+  <div class="badge-row">
+    <span class="mini-chip" style="background:#fff0f0;color:#c53030">D 支配型</span>
+    <span class="mini-chip" style="background:#e6fffa;color:#0d9488">I 影響型</span>
+    <span class="mini-chip" style="background:#f0fff4;color:#276749">S 穩健型</span>
+    <span class="mini-chip" style="background:#ebf8ff;color:#2b6cb0">C 分析型</span>
+    <span class="mini-chip" style="background:#faf5ff;color:#553c9a">× 4 種學習風格</span>
+  </div>
+
+  <p class="divider-label">你知道你的 DISC 動物嗎？</p>
+
+  </div>
+  <div style="padding: 0 36px 32px; text-align:center">
+  <div class="path-cards">
+    <div class="path-card path-a" onclick="goToDiscSelect()">
+      <div class="path-icon">✅</div>
+      <div class="path-text">
+        <div class="path-title">知道！直接跳到學習風格測驗</div>
+        <div class="path-desc">選擇你的 DISC 動物，然後進行 16 題學習風格測驗</div>
+      </div>
+    </div>
+    <div class="path-card path-b" onclick="goToDiscQuiz()">
+      <div class="path-icon">🔍</div>
+      <div class="path-text">
+        <div class="path-title">還不確定，先測看看</div>
+        <div class="path-desc">完成 30 題 DISC 測驗，再接著做 16 題學習風格 ─ 共 46 題</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ── DISC SELECT ── -->
+<div id="screen-disc-select" class="screen">
+  <img src="disc-banner.webp" alt="DISC 動物" class="disc-banner-img">
+  <div style="padding:20px 24px 12px">
+    <button onclick="goBack('welcome')" style="background:none;border:none;color:#718096;cursor:pointer;font-size:0.88rem;font-weight:700;margin-bottom:12px;">← 返回</button>
+    <div class="select-title">你是哪種 DISC 動物？</div>
+    <div class="select-sub">選擇最符合你個性的動物</div>
+  </div>
+  <div style="padding:0 24px 32px">
+    <div class="animal-grid">
+      <div class="animal-card disc-d" onclick="selectDiscType('D')">
+        <img src="disc-d.webp" alt="老虎" class="disc-photo">
+        <div class="aname">🐯 老虎</div>
+        <div class="atype" style="color:#c53030">D 支配型</div>
+      </div>
+      <div class="animal-card disc-i" onclick="selectDiscType('I')">
+        <img src="disc-i.webp" alt="孔雀" class="disc-photo">
+        <div class="aname">🦚 孔雀</div>
+        <div class="atype" style="color:#0d9488">I 影響型</div>
+      </div>
+      <div class="animal-card disc-s" onclick="selectDiscType('S')">
+        <img src="disc-s.webp" alt="無尾熊" class="disc-photo">
+        <div class="aname">🐨 無尾熊</div>
+        <div class="atype" style="color:#276749">S 穩健型</div>
+      </div>
+      <div class="animal-card disc-c" onclick="selectDiscType('C')">
+        <img src="disc-c.webp" alt="貓頭鷹" class="disc-photo">
+        <div class="aname">🦉 貓頭鷹</div>
+        <div class="atype" style="color:#2b6cb0">C 分析型</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DISC QUIZ ── -->
+<div id="screen-disc-quiz" class="screen">
+  <div class="quiz-top">
+    <div class="q-meta">
+      <span class="q-label">
+        <span class="phase-tag phase-disc">DISC 測驗</span>
+        第 <span id="dq-idx">1</span> 題
+      </span>
+      <span class="q-num" id="dq-num">1 / 30</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill pf-disc" id="dq-prog" style="width:0%"></div></div>
+  </div>
+  <div class="quiz-body">
+    <div class="q-prompt" id="dq-prompt"></div>
+    <div class="q-title" id="dq-title"></div>
+    <div id="dq-opts"></div>
+    <button class="btn-next" id="dq-next" onclick="nextDisc()">下一題 →</button>
+  </div>
+</div>
+
+<!-- ── TRANSITION ── -->
+<div id="screen-transition" class="screen">
+  <div class="trans-icon">🎉</div>
+  <div class="trans-title">DISC 完成！</div>
+  <div class="trans-sub">你的 DISC 類型是</div>
+  <div class="disc-result-mini" id="trans-result">
+    <img id="trans-photo" class="trans-photo zoomable" src="" alt="" onclick="openLightbox(this.src)">
+    <span id="trans-label"></span>
+  </div>
+  <p class="trans-sub">接下來，進行 16 題 <strong>學習風格</strong>測驗<br>找出你平常最順手的學習方式！</p>
+  <button class="btn-continue" onclick="startStyleQuiz()">開始學習風格測驗 →</button>
+</div>
+
+<!-- ── 學習風格 QUIZ（滑動卡片） ── -->
+<div id="screen-style-quiz" class="screen">
+  <div class="quiz-top">
+    <div class="q-meta">
+      <span class="q-label">
+        <span class="phase-tag phase-style">學習風格測驗</span>
+        第 <span id="sq-idx">1</span> 題
+      </span>
+      <span class="q-num" id="sq-num">1 / 16</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill pf-style" id="sq-prog" style="width:0%"></div></div>
+  </div>
+  <div class="quiz-body" style="padding-bottom:8px">
+    <div class="q-prompt">按住中間的卡片，拖到最符合你的象限</div>
+    <div class="swipe-stage" id="sq-stage">
+      <div class="swipe-zone" data-dir="V"><span class="zone-icon">👁️</span><span class="zone-label"></span></div>
+      <div class="swipe-zone" data-dir="A"><span class="zone-icon">👂</span><span class="zone-label"></span></div>
+      <div class="swipe-zone" data-dir="K"><span class="zone-icon">✋</span><span class="zone-label"></span></div>
+      <div class="swipe-zone" data-dir="R"><span class="zone-icon">📝</span><span class="zone-label"></span></div>
+      <div class="swipe-card" id="sq-card"></div>
+    </div>
+    <p class="swipe-hint">按住卡片會縮成光球，拖到象限放開即可作答；也可以直接點擊象限</p>
+  </div>
+</div>
+
+<!-- ── RESULT ── -->
+<div id="screen-result" class="screen">
+  <div class="result-header" id="r-header">
+    <div class="combo-portrait-wrap">
+      <img class="combo-portrait-img zoomable" id="r-combo-img" src="" alt="" onclick="openLightbox(this.src)">
+    </div>
+    <div class="combo-display">
+      <div class="disc-badge-wrap">
+        <img class="disc-result-photo zoomable" id="r-disc-img" src="" alt="" onclick="openLightbox(this.src)">
+      </div>
+      <span class="combo-times">×</span>
+      <div class="style-badge-wrap" id="r-style-badge"></div>
+    </div>
+    <div class="r-emoji" id="r-emoji"></div>
+    <div class="r-combo-name" id="r-combo-name"></div>
+    <div class="r-type-labels">
+      <span class="r-type-label" id="r-disc-label"></span>
+      <span class="r-type-label" id="r-style-label"></span>
+    </div>
+  </div>
+  <div class="result-body">
+    <div class="section">
+      <div class="section-title">✨ 你的組合描述</div>
+      <div class="combo-desc-card" id="r-combo-desc"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">🐾 DISC 個性特質</div>
+      <div class="disc-profile-card">
+        <div class="disc-card-inner">
+          <div class="disc-card-mini-wrap">
+            <img id="r-disc-mini-img" class="disc-mini-photo zoomable" src="" alt="" onclick="openLightbox(this.src)">
+          </div>
+          <div>
+            <div class="disc-type-title" id="r-disc-title"></div>
+            <div class="disc-type-sub" id="r-disc-sub"></div>
+          </div>
+        </div>
+        <div class="disc-type-desc" id="r-disc-desc"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🧠 學習風格</div>
+      <div class="style-card">
+        <div class="style-card-header">
+          <div class="style-mini-wrap" id="r-style-mini"></div>
+          <div>
+            <div class="style-role-title" id="r-style-title"></div>
+            <div class="style-role-en" id="r-style-en"></div>
+          </div>
+        </div>
+        <div class="style-role-desc" id="r-style-desc"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">⭐ 核心特質</div>
+      <div class="traits-wrap" id="r-traits"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">🔑 你的專屬代碼</div>
+      <div class="code-card">
+        <div class="code-student-info" id="r-student-info"></div>
+        <div class="code-display" id="r-result-code">──</div>
+        <p class="code-hint">請記下或截圖這組代碼<br>之後可到查詢頁輸入代碼，找回你的結果</p>
+      </div>
+    </div>
+  </div>
+  <div class="btn-area">
+    <button class="btn-share" onclick="shareResult()">📢 分享結果</button>
+    <button class="btn-again" onclick="restartAll()">🔄 重新測驗</button>
+    <a href="lookup.html" style="display:block;text-align:center;font-size:0.85rem;color:#718096;font-weight:700;text-decoration:none;padding:4px 0;">🔍 輸入代碼查詢已有結果</a>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="lightbox-close" id="lightbox-close" onclick="closeLightbox()">✕</button>
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="closeLightbox()">
+  <div class="lightbox-frame">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+</div>
+
+<script>
+function openLightbox(src) {
+  if (!src) return;
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-overlay').classList.add('active');
+  document.getElementById('lightbox-close').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox-overlay').classList.remove('active');
+  document.getElementById('lightbox-close').classList.remove('active');
+}
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DISC 資料
+// ═══════════════════════════════════════════════════════════════
+const DISC_ANIMALS = {
+D:{ name:'老虎', emoji:'🐯', badge:'D 型 — 支配型', grad:'linear-gradient(135deg,#e53e3e,#9b2335)',
+    line:'目標導向、果斷果敢，天生的行動派領袖！',
+    traits:[{i:'⚡',t:'行動力強'},{i:'🎯',t:'目標導向'},{i:'💪',t:'果斷果敢'},{i:'🗣️',t:'主動積極'},{i:'🏆',t:'追求成就'},{i:'🚀',t:'敢衝敢試'}],
+    desc:'你主動積極、結果導向，面對挑戰從不退縮。你的決斷力和行動力是團隊前進的強大引擎。' },
+I:{ name:'孔雀', emoji:'🦚', badge:'I 型 — 影響型', grad:'linear-gradient(135deg,#0d9488,#065f46)',
+    line:'熱情開朗、感染力十足，人群中的發光體！',
+    traits:[{i:'😄',t:'熱情開朗'},{i:'🌟',t:'感染力強'},{i:'🎨',t:'富有創意'},{i:'💬',t:'擅長溝通'},{i:'🤝',t:'善於社交'},{i:'🎉',t:'帶動氣氛'}],
+    desc:'你充滿活力與魅力，天生善於與人連結。你的熱情能感染周圍所有人，是讓團隊保持動力的靈魂人物。' },
+S:{ name:'無尾熊', emoji:'🐨', badge:'S 型 — 穩健型', grad:'linear-gradient(135deg,#38a169,#1c5e37)',
+    line:'溫暖可靠、耐心傾聽，大家最信任的守護者！',
+    traits:[{i:'❤️',t:'溫暖體貼'},{i:'🌿',t:'穩定可靠'},{i:'👂',t:'耐心傾聽'},{i:'🕊️',t:'追求和諧'},{i:'🤝',t:'忠誠守信'},{i:'☮️',t:'善於合作'}],
+    desc:'你溫和、可靠、善於傾聽，是隊伍裡大家最信賴的那個人。你的穩定讓一切都能持續向前，絕不輕易放棄。' },
+C:{ name:'貓頭鷹', emoji:'🦉', badge:'C 型 — 分析型', grad:'linear-gradient(135deg,#2b6cb0,#1a4e8a)',
+    line:'邏輯嚴謹、注重細節，追求完美的智慧之鷹！',
+    traits:[{i:'🧠',t:'邏輯思考'},{i:'🔍',t:'注重細節'},{i:'📊',t:'數據分析'},{i:'✅',t:'追求精準'},{i:'📚',t:'勤於學習'},{i:'🏅',t:'嚴謹專業'}],
+    desc:'你嚴謹細心、追求精準，是把關品質的最強守門員。你的系統性思維讓每個決策都有充分依據。' }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 學習風格資料（VARK 模型：視覺 / 聽覺 / 動手實作 / 讀寫）
+// ═══════════════════════════════════════════════════════════════
+const LEARNING_STYLES = {
+V:{ name:'視覺型', emoji:'👁️', en:'Visual', badge:'V 型 — 圖像學習',
+    desc:'你習慣把資訊轉換成畫面來理解，一張圖勝過千言萬語。你的筆記常常畫滿箭頭、方框和顏色，因為你的腦袋本來就用「看」的在思考。' },
+A:{ name:'聽覺型', emoji:'👂', en:'Auditory', badge:'A 型 — 聲音學習',
+    desc:'你靠「聽」和「說」來吸收知識，講出來、聽出來就記住了。安靜的閱讀對你來說沒那麼直覺，一場對話反而更有效率。' },
+K:{ name:'動手型', emoji:'✋', en:'Kinesthetic', badge:'K 型 — 實作學習',
+    desc:'你必須親自動手做過，才能真正把一件事學進去。坐著聽講對你來說很煎熬，直接下場試試看才是你最自然的學習方式。' },
+R:{ name:'讀寫型', emoji:'📝', en:'Read & Write', badge:'R 型 — 文字學習',
+    desc:'你習慣透過閱讀和書寫來消化資訊，文字對你來說最精準、最可靠。一份寫清楚的講義，比任何影片或口頭解說都讓你安心。' }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 16 種組合結果（DISC 4 型 × 學習風格 4 型）
+// ═══════════════════════════════════════════════════════════════
+const COMBOS = {
+'D-V':{ name:'戰略製圖師', emoji:'🗺️', desc:'老虎的行動力配上視覺學習，你最有效率的讀書方式，是先把重點畫成心智圖、流程圖或時間軸，讓自己在動筆寫題目之前，先在腦中建立一張清楚的「作戰地圖」。與其一頁一頁死讀課本，不如把整個章節濃縮成一張一眼就能掌握全局的圖表——看得到終點，你才會全力衝刺。準備考試時，試著把每個單元都畫成一張視覺筆記，複習時只要看圖就能快速喚醒記憶，效率會比重讀課本高上許多。' },
+'D-A':{ name:'即席指揮官', emoji:'📢', desc:'老虎的果斷配上聽覺學習，你適合用「講出來、找人辯論」的方式讀書，而不是安靜坐著硬背。把重點講一遍給同學聽、主動發起小組討論、甚至用問答的方式跟自己對話，都會比悶頭閱讀更快抓住核心。你的決斷力來自即時的來回交鋒，所以與其一個人埋頭苦讀，不如找一兩個讀書夥伴，用互相考試、辯論的方式準備，你會在對話中自然而然記住重點，也更有動力持續下去。' },
+'D-K':{ name:'實戰先鋒', emoji:'⚡', desc:'老虎的行動力配上動手實作，光看不做對你來說是最沒有效率的學習方式。與其把時間花在反覆閱讀講義，不如直接寫題目、直接動手做實驗、直接把公式套進題目裡驗證——在做的過程中犯錯、修正、再嘗試，才是你真正記得住的方式。準備考試時，建議把讀書時間分配得更偏向「練習題」而非「閱讀」，用大量實戰累積手感，你會發現這比任何講解都更快讓你抓住訣竅。' },
+'D-R':{ name:'戰術策劃者', emoji:'📋', desc:'老虎的目標導向配上讀寫學習，你適合把讀書計畫寫成清單、把重點條列成一步一步的步驟，用文字替你天生的衝勁裝上導航系統，讓每一次全力衝刺之前，都清楚知道下一步該做什麼、還剩下多少進度。建議你養成寫「讀書計畫表」和「重點條列筆記」的習慣，把大目標拆解成一個個可以打勾完成的小任務——這樣不只讓行動更精準，也會讓你在衝刺的過程中持續看到自己的進度，更有成就感。' },
+'I-V':{ name:'畫面魔術師', emoji:'🎨', desc:'孔雀的熱情配上視覺學習，你適合用色彩、圖卡、心智圖來整理筆記，把知識變成一張張有畫面感的圖像。單調的黑白文字很難留住你的注意力，但只要加上顏色、插畫、標籤，讀書對你來說就會變得像在創作一樣有趣。試著用不同顏色的筆標記不同類型的重點、把長篇文字濃縮成圖解，甚至畫成一張張小卡片——因為好玩，你會更願意一讀再讀，記憶也自然更深刻。' },
+'I-A':{ name:'金牌主持人', emoji:'🎤', desc:'孔雀的表達力配上聽覺學習，你最強的讀書方式就是「講給別人聽」。把課本內容用自己的話重新講一遍、找同學互相考問、甚至錄音下來自己回放，都會比安靜看書更有效率。你天生善於用聲音和語氣感染人，所以不妨把複習變成一場小型分享會——約幾個同學一起讀書，輪流當「小老師」講解單元重點，你會在教別人的過程中，把知識講得越來越熟練、記得越來越牢。' },
+'I-K':{ name:'派對行動家', emoji:'🎉', desc:'孔雀的活力配上動手實作，你適合把讀書變成一場有互動的活動，而不是安靜坐在書桌前。用角色扮演重現歷史事件、動手做實驗驗證理論、跟同學來一場搶答競賽——只要能讓身體和情緒都參與進來，你就能學得又快又開心。試著把枯燥的複習內容設計成小遊戲或挑戰賽，動起來、玩起來的你，才會真正把知識吸收進去，而且記得特別久。' },
+'I-R':{ name:'文字暖心人', emoji:'💌', desc:'孔雀的感染力配上讀寫學習，你適合把學到的東西寫成自己的心得、故事或日記，用你擅長的文字重新詮釋課本內容，把冷冰冰的知識轉化成有溫度、有個人風格的句子——寫下來的過程，會幫你把當下的感受和理解，真正轉化成留在腦中的記憶。建議準備一本「學習心得本」，每讀完一個單元就寫幾句自己的話總結，這樣不只加深印象，也會讓讀書變成一件更有意義的事。' },
+'S-V':{ name:'安靜觀察家', emoji:'🌿', desc:'無尾熊的穩定配上視覺學習，你適合用固定的圖表和架構，慢慢建立起完整而扎實的理解。不用急著一次記住所有東西，把資訊整理成清楚的視覺架構圖，讓知識像拼圖一樣一塊一塊慢慢拼上去，你會讀得更安心，記得也更持久。建議你為每個科目建立一套固定格式的筆記系統，用同樣的顏色和排版整理重點——熟悉的架構會讓你在複習時特別有安全感，也更容易靜下心來專注。' },
+'S-A':{ name:'溫柔傾聽者', emoji:'👂', desc:'無尾熊的耐心配上聽覺學習，你適合用聽課、聽錄音、跟人小聲討論的方式吸收知識，不需要求快。反覆聽個幾遍、讓資訊慢慢沉澱，會比逼自己一次就要記住更符合你的步調。你善於傾聽也善於消化，所以不妨把課堂錄音或線上課程存下來，通勤或睡前反覆聽——安靜地、一遍一遍地聽，知識會在不知不覺中內化成你自己的東西，這種細水長流的方式最適合你。' },
+'S-K':{ name:'踏實實踐家', emoji:'🌱', desc:'無尾熊的踏實配上動手實作，你適合透過反覆練習來慢慢建立信心，而不是臨時抱佛腳。同一種題型多做幾次、同一個流程多走幾遍，讓身體記住節奏，會比考前一口氣硬塞知識更符合你穩紮穩打的個性。建議把讀書計畫拉長、分成每天固定的小份量，每天穩定地練習一點，日積月累下來，你會發現自己在不知不覺中已經累積了扎實的實力，而且記得特別牢固、不容易忘記。' },
+'S-R':{ name:'筆記守護者', emoji:'📔', desc:'無尾熊的穩定配上讀寫學習，你適合把筆記整理得清清楚楚，並且反覆閱讀、反覆確認。一份完整可靠的筆記會是你最安心的讀書夥伴，讀一次、記一次，慢慢累積就是你最扎實的實力。建議你養成每天固定時間整理筆記的習慣，把當天學到的東西用自己的話寫下來、分類歸檔——這樣不只讓知識更有系統，回頭複習時，翻開筆記本的那份安心感，也會讓你讀書讀得更踏實。' },
+'C-V':{ name:'系統圖解師', emoji:'📐', desc:'貓頭鷹的邏輯配上視覺學習，你適合把複雜的知識拆解成圖表、流程圖或架構圖，用結構化的畫面理解每個環節之間的因果關係。純文字的敘述對你來說常常不夠精準，但只要畫成圖，邏輯關係就會一目了然。建議你在讀書時養成「畫圖釐清邏輯」的習慣——遇到複雜的概念，先動手畫出它的架構和因果鏈，你會發現自己理解得比死記硬背更深入，也更能舉一反三。' },
+'C-A':{ name:'深度聆聽者', emoji:'🎧', desc:'貓頭鷹的分析力配上聽覺學習，你適合聽講座、聽 Podcast、參與深度討論，從話語中抓出邏輯和細節。你擅長一邊聽一邊在腦中分析、拆解、歸納，這種「用聽來分析」的方式，有時候反而會比自己埋頭閱讀更有效率。建議你多利用零碎時間聽相關主題的深度內容，並養成邊聽邊做筆記整理重點的習慣——聽完之後試著用自己的邏輯重新講一遍，會幫你把資訊消化得更透徹。' },
+'C-K':{ name:'實驗研究員', emoji:'🔬', desc:'貓頭鷹的嚴謹配上動手實作，你適合用實驗、驗證的方式來確認自己是否真的理解。親自動手測試假設、反覆操作確認結果，比起單純閱讀理論，實際做過一次更能說服你自己「真的懂了」。建議你在讀書時多為自己設計一些小驗證——例如自己出題目考自己、動手重現一次解題過程——這種親自驗證的習慣，會讓你的理解更加扎實可靠，也更經得起考試時的推敲。' },
+'C-R':{ name:'文字考據家', emoji:'📖', desc:'貓頭鷹的專業配上讀寫學習，你是天生適合精讀的人。逐字逐句閱讀、動手寫筆記、做系統性的整理歸納，文字對你來說最精準可靠，也是你建立扎實知識最好用的工具。建議你為每個重要主題建立一份詳細的整理筆記，標註出處、來龍去脈和關鍵細節——這種嚴謹考據的讀書方式雖然花時間，但會讓你的知識體系特別穩固，也最經得起深入追問。' }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// DISC 題目（20 詞語 + 10 情境）
+// ═══════════════════════════════════════════════════════════════
+const DISC_WORD_QS = [
+  {opts:[{t:'I',w:'活潑生動'},{t:'D',w:'冒險精神'},{t:'C',w:'善於分析'},{t:'S',w:'適應性強'}]},
+  {opts:[{t:'I',w:'善於社交'},{t:'D',w:'善於說服'},{t:'C',w:'堅持不懈'},{t:'S',w:'平和溫順'}]},
+  {opts:[{t:'I',w:'可愛'},    {t:'D',w:'勇敢'},    {t:'C',w:'體貼'},    {t:'S',w:'自律'}]},
+  {opts:[{t:'I',w:'無拘無束'},{t:'D',w:'善於應變'},{t:'C',w:'注意細節'},{t:'S',w:'外交手腕'}]},
+  {opts:[{t:'I',w:'使人振作'},{t:'D',w:'喜競爭勝'},{t:'C',w:'自我犧牲'},{t:'S',w:'較少爭辯'}]},
+  {opts:[{t:'I',w:'活力充沛'},{t:'D',w:'自立'},    {t:'C',w:'敏感'},    {t:'S',w:'滿足'}]},
+  {opts:[{t:'I',w:'情感外露'},{t:'D',w:'果斷'},    {t:'C',w:'深沉'},    {t:'S',w:'淡然幽默'}]},
+  {opts:[{t:'I',w:'樂觀'},    {t:'D',w:'坦率'},    {t:'C',w:'井井有條'},{t:'S',w:'遷就'}]},
+  {opts:[{t:'I',w:'愛插嘴'},  {t:'D',w:'沒耐性'},  {t:'C',w:'優柔寡斷'},{t:'S',w:'無安全感'}]},
+  {opts:[{t:'I',w:'散漫'},    {t:'D',w:'缺乏同情心'},{t:'C',w:'報復'}, {t:'S',w:'缺乏熱情'}]},
+  {opts:[{t:'I',w:'煩躁'},    {t:'D',w:'輕率'},    {t:'C',w:'挑剔'},    {t:'S',w:'膽小'}]},
+  {opts:[{t:'I',w:'健忘'},    {t:'D',w:'控制欲'},  {t:'C',w:'孤僻'},    {t:'S',w:'懶惰'}]},
+  {opts:[{t:'I',w:'激勵人心'},{t:'D',w:'獨立'},    {t:'C',w:'理想主義'},{t:'S',w:'含蓄'}]},
+  {opts:[{t:'I',w:'推動者'},  {t:'D',w:'領導者'},  {t:'C',w:'計劃者'},  {t:'S',w:'聆聽者'}]},
+  {opts:[{t:'I',w:'多言'},    {t:'D',w:'執著'},    {t:'C',w:'考慮周到'},{t:'S',w:'耐性'}]},
+  {opts:[{t:'I',w:'即興'},    {t:'D',w:'固執'},    {t:'C',w:'難於取悅'},{t:'S',w:'猶豫不決'}]},
+  {opts:[{t:'I',w:'天真'},    {t:'D',w:'魯莽'},    {t:'C',w:'消極'},    {t:'S',w:'冷漠'}]},
+  {opts:[{t:'I',w:'受歡迎'},  {t:'D',w:'工作狂'},  {t:'C',w:'過於嚴肅'},{t:'S',w:'羞澀'}]},
+  {opts:[{t:'I',w:'露骨'},    {t:'D',w:'專橫'},    {t:'C',w:'乏味'},    {t:'S',w:'扭捏'}]},
+  {opts:[{t:'I',w:'不專注'},  {t:'D',w:'不容忍'},  {t:'C',w:'情緒化'},  {t:'S',w:'無目標'}]},
+];
+const DISC_SCENARIO_QS = [
+  { q:'在小組討論中，你通常是…',
+    opts:[{t:'I',icon:'🎉',label:'讓氣氛活躍，讓大家都想發言'},{t:'D',icon:'⚡',label:'直接說出想法，帶領討論方向'},{t:'S',icon:'🤝',label:'靜靜聆聽，在需要時給予支持'},{t:'C',icon:'📋',label:'整理大家的意見，分析優缺點'}]},
+  { q:'遇到困難的問題，你第一個反應是…',
+    opts:[{t:'D',icon:'🚀',label:'立刻嘗試，邊做邊解決'},{t:'I',icon:'💬',label:'找朋友討論，集思廣益'},{t:'S',icon:'🌿',label:'保持冷靜，一步一步來'},{t:'C',icon:'🔍',label:'先蒐集資料，仔細研究再行動'}]},
+  { q:'放假時，你最想做的事是…',
+    opts:[{t:'I',icon:'🎊',label:'去熱鬧的地方、認識新朋友'},{t:'D',icon:'🧗',label:'嘗試有挑戰性的新活動'},{t:'S',icon:'☕',label:'和好友窩在家裡聊天、放鬆'},{t:'C',icon:'📖',label:'讀書或研究自己感興趣的主題'}]},
+  { q:'在衝突發生時，你的反應是…',
+    opts:[{t:'I',icon:'😄',label:'用幽默緩解緊張，讓大家笑笑'},{t:'D',icon:'🗣️',label:'直接面對，把問題說清楚'},{t:'S',icon:'🕊️',label:'盡量避免衝突，維持和平'},{t:'C',icon:'🧩',label:'分析問題來源，找出最合理的解法'}]},
+  { q:'哪一句話最符合你的做事風格？',
+    opts:[{t:'D',icon:'⚡',label:'「先做再說，機會不等人！」'},{t:'I',icon:'🌞',label:'「人生要快樂，一起玩才好！」'},{t:'S',icon:'🌿',label:'「穩紮穩打，慢慢來比較快。」'},{t:'C',icon:'🔭',label:'「細節決定成敗，品質最重要。」'}]},
+  { q:'在學校做報告，你最享受哪個環節？',
+    opts:[{t:'I',icon:'🌟',label:'上台報告，表現給大家看'},{t:'D',icon:'🏁',label:'設定目標、帶領組員完成任務'},{t:'S',icon:'🤝',label:'和同學合作，一起完成'},{t:'C',icon:'🔬',label:'做深入的資料蒐集和分析'}]},
+  { q:'面對新環境（新班級、新社團），你通常…',
+    opts:[{t:'I',icon:'🙋',label:'主動認識新朋友，馬上融入'},{t:'D',icon:'🎯',label:'觀察環境，找機會展現自己'},{t:'S',icon:'🌱',label:'慢慢熟悉，等時機自然融入'},{t:'C',icon:'🗺️',label:'先了解規則和文化再行動'}]},
+  { q:'你在團隊中最重要的貢獻是…',
+    opts:[{t:'I',icon:'🤩',label:'激勵士氣，讓大家保持活力'},{t:'D',icon:'💡',label:'提出大膽的目標和方向'},{t:'S',icon:'🌉',label:'協調各方，讓合作更順暢'},{t:'C',icon:'🔎',label:'確保品質和細節都正確'}]},
+  { q:'你更喜歡哪種學習方式？',
+    opts:[{t:'I',icon:'🎮',label:'遊戲化學習，和同學互動'},{t:'D',icon:'🏋️',label:'直接挑戰，從做中學'},{t:'S',icon:'🫶',label:'老師有耐心地引導和陪伴'},{t:'C',icon:'📊',label:'有系統的教學，循序漸進'}]},
+  { q:'當朋友遇到困難來找你，你通常…',
+    opts:[{t:'I',icon:'🎁',label:'給予鼓勵，讓對方重拾自信'},{t:'D',icon:'🛠️',label:'直接給建議，幫對方解決問題'},{t:'S',icon:'👂',label:'靜靜陪伴，讓對方知道你在'},{t:'C',icon:'📝',label:'提供詳細的步驟或參考資訊'}]},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// 學習風格題目（16 題，改編自 W3 學習風格小測驗）
+// 每題 4 選項固定對應 V=視覺 / A=聽覺 / K=動手 / R=讀寫
+// ═══════════════════════════════════════════════════════════════
+const STYLE_QS = [
+  { q:'老師在課堂上講了一個新概念，你最容易記住的是…',
+    opts:[{t:'V',label:'他畫在白板上的那張圖'},{t:'A',label:'他講的例子和語氣'},{t:'K',label:'當場動手做的練習'},{t:'R',label:'抄下來的筆記和段落'}]},
+  { q:'要去一個沒去過的地方，你會…',
+    opts:[{t:'V',label:'先看地圖，記住路線'},{t:'A',label:'問人怎麼走，聽他講'},{t:'K',label:'直接出發，邊走邊找'},{t:'R',label:'把地址寫下來或存起來'}]},
+  { q:'買了一個新的電子產品，你會…',
+    opts:[{t:'V',label:'看包裝上的圖示說明'},{t:'A',label:'問已經有的人怎麼用'},{t:'K',label:'直接打開來按按看'},{t:'R',label:'把說明書從頭讀一遍'}]},
+  { q:'準備考試的時候，你最常做的是…',
+    opts:[{t:'V',label:'畫重點、做表格或圖'},{t:'A',label:'念出聲，跟同學講解'},{t:'K',label:'一直做題目、練習'},{t:'R',label:'重看課本筆記整理'}]},
+  { q:'小組討論的時候，你比較習慣…',
+    opts:[{t:'V',label:'畫出大家講的東西'},{t:'A',label:'用講的把想法說出來'},{t:'K',label:'直接動手做做看'},{t:'R',label:'把意見寫下來整理'}]},
+  { q:'要學會一個新的軟體或 APP，你會…',
+    opts:[{t:'V',label:'看教學影片的畫面'},{t:'A',label:'聽別人講解一遍'},{t:'K',label:'自己亂點，點到會'},{t:'R',label:'搜尋圖文教學照著讀'}]},
+  { q:'看完一部電影，你印象最深的通常是…',
+    opts:[{t:'V',label:'某個畫面或色調'},{t:'A',label:'某一句台詞或配樂'},{t:'K',label:'動作場面或身體反應'},{t:'R',label:'劇情的走向和邏輯'}]},
+  { q:'有人跟你解釋一件複雜的事，你會希望他…',
+    opts:[{t:'V',label:'畫給我看'},{t:'A',label:'講給我聽就好'},{t:'K',label:'帶我做一次'},{t:'R',label:'寫下來給我自己讀'}]},
+  { q:'你的筆記通常長什麼樣子？',
+    opts:[{t:'V',label:'箭頭、方框、顏色像圖'},{t:'A',label:'很少寫，用聽的記'},{t:'K',label:'筆記很少，練習本很滿'},{t:'R',label:'整齊的條列，字很多'}]},
+  { q:'要記住一串資訊（例如報告的流程），你會…',
+    opts:[{t:'V',label:'在腦中想像排列樣子'},{t:'A',label:'念幾遍，讓自己聽熟'},{t:'K',label:'實際跑過一次流程'},{t:'R',label:'寫成清單，反覆看'}]},
+  { q:'上課如果太久沒有互動，你最容易…',
+    opts:[{t:'V',label:'開始在紙上塗鴉'},{t:'A',label:'放空但還聽得進去'},{t:'K',label:'坐不住，想動一動'},{t:'R',label:'自己往下讀課本'}]},
+  { q:'你覺得自己「真的學會」一件事，通常是在…',
+    opts:[{t:'V',label:'腦中出現清楚畫面後'},{t:'A',label:'能講給別人聽之後'},{t:'K',label:'自己做出來之後'},{t:'R',label:'能寫出來整理出來後'}]},
+  { q:'上課的時候，最能幫你進入狀況的是…',
+    opts:[{t:'V',label:'投影片的圖表或影片'},{t:'A',label:'語氣和舉的例子'},{t:'K',label:'讓我們動手做一段'},{t:'R',label:'有講義可以自己讀'}]},
+  { q:'要學一道沒做過的菜，你會…',
+    opts:[{t:'V',label:'找有畫面的食譜影片'},{t:'A',label:'問會做的人講一遍'},{t:'K',label:'憑感覺先做，不對再調'},{t:'R',label:'找寫清楚步驟的食譜'}]},
+  { q:'一篇文章讀了兩次還是不太懂，你接下來會…',
+    opts:[{t:'V',label:'畫成圖或表看結構'},{t:'A',label:'唸出聲音或找人討論'},{t:'K',label:'先照著做一次'},{t:'R',label:'重讀、標重點寫摘要'}]},
+  { q:'開學認識一堆新同學，你記住他們的方式通常是…',
+    opts:[{t:'V',label:'記臉、記位置和穿著'},{t:'A',label:'記名字發音和說話聲'},{t:'K',label:'記一起做過的活動'},{t:'R',label:'把名字存進手機'}]},
+];
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypRZPwAtwX6NkrPZYM8vJPPCY_3EliXdFHRHzL7GJ8330fUdakTrJ6qoQVa0YkSlEhrg/exec';
+
+// ═══════════════════════════════════════════════════════════════
+// 狀態
+// ═══════════════════════════════════════════════════════════════
+let studentData = { course: '', className: '', studentId: '', name: '' };
+let resultCode = '';
+
+let discType = null;
+let styleType = null;
+
+// DISC quiz state
+let discQs = [], discCur = 0, discPicked = null, discScores = {D:0,I:0,S:0,C:0};
+
+// 學習風格 quiz state
+let styleQs = [], styleCur = 0, styleScores = {V:0,A:0,K:0,R:0};
+
+const LETTERS = ['A','B','C','D'];
+
+function shuffle(arr) { return arr.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Entry Form ─────────────────────────────────────────────────
+function submitEntry() {
+  const course = document.getElementById('f-course').value.trim();
+  const cls    = document.getElementById('f-class').value.trim();
+  const sid    = document.getElementById('f-student-id').value.trim();
+  const name   = document.getElementById('f-name').value.trim();
+  if (!course || !cls || !sid || !name) {
+    alert('請填寫所有欄位後再繼續。');
+    return;
+  }
+  studentData = { course, className: cls, studentId: sid, name };
+  showScreen('screen-welcome');
+}
+
+// ── Save Result ────────────────────────────────────────────────
+function saveResult() {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  const disc  = DISC_ANIMALS[discType];
+  const style = LEARNING_STYLES[styleType];
+  const combo = COMBOS[discType + '-' + styleType];
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      quiz:           'learning',
+      code:           resultCode,
+      course:         studentData.course,
+      className:      studentData.className,
+      studentId:      studentData.studentId,
+      name:           studentData.name,
+      discType:       discType,
+      discAnimal:     disc.name,
+      styleType:      styleType,
+      styleTypeName:  style.name,
+      comboName:      combo ? combo.name : ''
+    })
+  }).catch(() => {});
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function goBack(target) {
+  if (target === 'welcome') showScreen('screen-welcome');
+}
+function goToDiscSelect() { showScreen('screen-disc-select'); }
+function goToDiscQuiz() {
+  discQs = shuffle([
+    ...DISC_WORD_QS.map(q=>({...q,type:'word',opts:shuffle([...q.opts])})),
+    ...DISC_SCENARIO_QS.map(q=>({...q,type:'scenario',opts:shuffle([...q.opts])}))
+  ]);
+  discCur = 0; discPicked = null; discScores = {D:0,I:0,S:0,C:0};
+  showScreen('screen-disc-quiz');
+  renderDisc();
+}
+
+// ── DISC Select (Path A) ───────────────────────────────────────
+function selectDiscType(type) {
+  discType = type;
+  startStyleQuiz();
+}
+
+// ── DISC Quiz (Path B) ─────────────────────────────────────────
+function renderDisc() {
+  discPicked = null;
+  const q = discQs[discCur];
+  const total = discQs.length;
+  document.getElementById('dq-idx').textContent = discCur + 1;
+  document.getElementById('dq-num').textContent = (discCur+1) + ' / ' + total;
+  document.getElementById('dq-prog').style.width = Math.round(discCur/total*100) + '%';
+
+  const btn = document.getElementById('dq-next');
+  btn.className = 'btn-next';
+  btn.textContent = discCur === total-1 ? '完成 DISC →' : '下一題 →';
+
+  if (q.type === 'word') {
+    document.getElementById('dq-prompt').textContent = '選出最符合你的詞語';
+    document.getElementById('dq-title').textContent = '以下哪個詞語，最能描述你？';
+    renderDiscWord(q.opts);
+  } else {
+    document.getElementById('dq-prompt').textContent = '選出最符合你的情境';
+    document.getElementById('dq-title').textContent = q.q;
+    renderDiscScenario(q.opts);
+  }
+}
+function renderDiscWord(opts) {
+  const c = document.getElementById('dq-opts');
+  c.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'options-grid';
+  opts.forEach((opt,i) => {
+    const card = document.createElement('div');
+    card.className = 'opt-card';
+    card.innerHTML = `<div class="opt-letter">${LETTERS[i]}</div><div class="opt-word">${opt.w}</div>`;
+    card.onclick = () => selectDisc(opt.t, card);
+    grid.appendChild(card);
+  });
+  c.appendChild(grid);
+}
+function renderDiscScenario(opts) {
+  const c = document.getElementById('dq-opts');
+  c.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'options-list';
+  opts.forEach((opt,i) => {
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    row.innerHTML = `<div class="opt-letter">${LETTERS[i]}</div><div class="opt-icon-box">${opt.icon}</div><div class="opt-sentence">${opt.label}</div>`;
+    row.onclick = () => selectDisc(opt.t, row);
+    list.appendChild(row);
+  });
+  c.appendChild(list);
+}
+function selectDisc(type, el) {
+  document.querySelectorAll('#dq-opts .opt-card, #dq-opts .opt-row').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  discPicked = type;
+  document.getElementById('dq-next').classList.add('active');
+}
+function nextDisc() {
+  if (!discPicked) return;
+  discScores[discPicked]++;
+  discCur++;
+  if (discCur >= discQs.length) finishDisc();
+  else renderDisc();
+}
+function finishDisc() {
+  const max = Math.max(...Object.values(discScores));
+  const winners = Object.keys(discScores).filter(k=>discScores[k]===max);
+  discType = winners.length === 1 ? winners[0] : winners[Math.floor(Math.random()*winners.length)];
+  // Show transition screen
+  const a = DISC_ANIMALS[discType];
+  const animalSrc = {D:'disc-d.webp',I:'disc-i.webp',S:'disc-s.webp',C:'disc-c.webp'};
+  document.getElementById('trans-photo').src = animalSrc[discType];
+  document.getElementById('trans-label').textContent = a.emoji + ' ' + a.name + '（' + a.badge + '）';
+  showScreen('screen-transition');
+}
+
+// ── 學習風格 Quiz（四象限：按住卡片縮成光球，拖到象限作答）──────
+// 格線位置：左上=V 右上=A 左下=K 右下=R
+let sqCard = null, sqLocked = false;
+let sqDragging = false, sqStartX = 0, sqStartY = 0, sqDX = 0, sqDY = 0;
+const SWIPE_COMMIT = 50;
+
+function startStyleQuiz() {
+  styleScores = { V:0, A:0, K:0, R:0 };
+  styleQs = shuffle([...STYLE_QS]);
+  styleCur = 0;
+  showScreen('screen-style-quiz');
+  initSwipeCard();
+  renderStyleCard(true);
+}
+
+function initSwipeCard() {
+  if (sqCard) return; // 只綁定一次事件
+  sqCard = document.getElementById('sq-card');
+
+  sqCard.addEventListener('pointerdown', (e) => {
+    if (sqLocked) return;
+    sqDragging = true;
+    sqCard.classList.add('grabbing', 'shrunk');
+    sqStartX = e.clientX; sqStartY = e.clientY; sqDX = 0; sqDY = 0;
+    sqCard.setPointerCapture(e.pointerId);
+  });
+  sqCard.addEventListener('pointermove', (e) => {
+    if (!sqDragging || sqLocked) return;
+    sqDX = e.clientX - sqStartX; sqDY = e.clientY - sqStartY;
+    sqCard.style.transform = `translate(-50%,-50%) translate(${sqDX}px,${sqDY}px)`;
+    const dist = Math.hypot(sqDX, sqDY);
+    setZoneActive(dist > 18 ? quadrantFor(sqDX, sqDY) : null);
+  });
+  const endDrag = () => {
+    if (!sqDragging) return;
+    sqDragging = false;
+    sqCard.classList.remove('grabbing');
+    if (sqLocked) return;
+    const dist = Math.hypot(sqDX, sqDY);
+    if (dist > SWIPE_COMMIT) {
+      commitStyle(quadrantFor(sqDX, sqDY));
+    } else {
+      sqCard.classList.add('reentering');
+      sqCard.classList.remove('shrunk');
+      sqCard.style.transform = 'translate(-50%,-50%)';
+      setZoneActive(null);
+      setTimeout(() => sqCard.classList.remove('reentering'), 340);
+    }
+  };
+  sqCard.addEventListener('pointerup', endDrag);
+  sqCard.addEventListener('pointercancel', endDrag);
+
+  document.querySelectorAll('.swipe-zone').forEach(z => {
+    z.addEventListener('click', () => { if (!sqLocked) commitStyle(z.dataset.dir); });
+  });
+}
+
+// 拖曳起點固定在中心：dx/dy 的正負號決定落在哪個象限
+// 左上=V 右上=A 左下=K 右下=R（對應 2×2 格線的排列順序）
+function quadrantFor(dx, dy) {
+  if (dx <= 0 && dy <= 0) return 'V';
+  if (dx > 0 && dy <= 0) return 'A';
+  if (dx <= 0 && dy > 0) return 'K';
+  return 'R';
+}
+function setZoneActive(dir) {
+  document.querySelectorAll('.swipe-zone').forEach(z => z.classList.toggle('active', z.dataset.dir === dir));
+}
+
+function renderStyleCard(first) {
+  const q = styleQs[styleCur];
+  const total = styleQs.length;
+  document.getElementById('sq-idx').textContent = styleCur + 1;
+  document.getElementById('sq-num').textContent = (styleCur+1) + ' / ' + total;
+  document.getElementById('sq-prog').style.width = Math.round(styleCur/total*100) + '%';
+  sqCard.textContent = q.q;
+  q.opts.forEach(opt => {
+    document.querySelector('.swipe-zone[data-dir="'+opt.t+'"] .zone-label').textContent = opt.label;
+  });
+  if (first) {
+    sqCard.style.transition = 'none';
+    sqCard.style.transform = 'translate(-50%,-50%)';
+    sqCard.style.opacity = '1';
+  }
+}
+
+function commitStyle(dir) {
+  sqLocked = true;
+  styleScores[dir]++;
+  setZoneActive(dir);
+  // 不論是拖曳放開還是直接點擊象限，都先讓卡片絲滑縮成光球，
+  // 短暫停留在該象限上讓玩家看清楚選了什麼，再淡出換下一題
+  sqCard.style.transform = 'translate(-50%,-50%)';
+  sqCard.classList.add('shrunk');
+  setTimeout(() => {
+    sqCard.classList.add('flying');
+    sqCard.style.opacity = '0';
+    setTimeout(() => {
+      styleCur++;
+      if (styleCur >= styleQs.length) { showResult(); return; }
+      sqCard.classList.remove('flying', 'shrunk');
+      sqCard.style.transition = 'none';
+      sqCard.style.transform = 'translate(-50%,-50%) scale(0.85)';
+      sqCard.style.opacity = '0';
+      setZoneActive(null);
+      renderStyleCard(false);
+      requestAnimationFrame(() => {
+        sqCard.classList.add('reentering');
+        sqCard.style.transform = 'translate(-50%,-50%) scale(1)';
+        sqCard.style.opacity = '1';
+        setTimeout(() => { sqCard.classList.remove('reentering'); sqLocked = false; }, 340);
+      });
+    }, 260);
+  }, 280);
+}
+
+// ── Result ─────────────────────────────────────────────────────
+// 同分時依 DISC 類型決定優先順序——讓人格傾向替你打破平手
+const STYLE_TIEBREAK = {
+  D: ['K','A','V','R'],
+  I: ['A','V','K','R'],
+  S: ['V','R','A','K'],
+  C: ['R','V','K','A']
+};
+
+function showResult() {
+  // 產生亂數代碼
+  resultCode = Math.random().toString(36).substr(2, 8).toUpperCase();
+
+  const max = Math.max(...Object.values(styleScores));
+  const winners = Object.keys(styleScores).filter(r => styleScores[r] === max);
+  styleType = winners.length === 1
+    ? winners[0]
+    : STYLE_TIEBREAK[discType].find(r => winners.includes(r));
+
+  const comboKey = discType + '-' + styleType;
+  const combo = COMBOS[comboKey];
+  const disc  = DISC_ANIMALS[discType];
+  const style = LEARNING_STYLES[styleType];
+
+  // Header
+  document.getElementById('r-header').style.background = disc.grad;
+  const animalSrc = {D:'disc-d.webp',I:'disc-i.webp',S:'disc-s.webp',C:'disc-c.webp'};
+  document.getElementById('r-disc-img').src = animalSrc[discType];
+  document.getElementById('r-disc-mini-img').src = animalSrc[discType];
+  const styleSrc = {V:'style-V.webp',A:'style-A.webp',K:'style-K.webp',R:'style-R.webp'};
+  document.getElementById('r-style-badge').innerHTML = `<img src="${styleSrc[styleType]}" alt="" onclick="openLightbox(this.src)">`;
+  document.getElementById('r-combo-img').src = 'combo-images/' + discType + '-' + styleType + '.webp';
+  document.getElementById('r-emoji').textContent = combo.emoji;
+  document.getElementById('r-combo-name').textContent = combo.name;
+  document.getElementById('r-disc-label').textContent = disc.emoji + ' ' + disc.badge;
+  document.getElementById('r-style-label').textContent = style.emoji + ' ' + style.name;
+
+  // Combo desc
+  document.getElementById('r-combo-desc').textContent = combo.desc;
+
+  // DISC profile
+  document.getElementById('r-disc-title').textContent = disc.emoji + ' ' + disc.name;
+  document.getElementById('r-disc-sub').textContent = disc.badge;
+  document.getElementById('r-disc-desc').textContent = disc.line + ' ' + disc.desc;
+
+  // 學習風格 profile
+  document.getElementById('r-style-mini').innerHTML = `<img src="${styleSrc[styleType]}" alt="" onclick="openLightbox(this.src)">`;
+  document.getElementById('r-style-title').textContent = style.name;
+  document.getElementById('r-style-en').textContent = style.en + ' ｜ ' + style.badge;
+  document.getElementById('r-style-desc').textContent = style.desc;
+
+  // Traits (DISC traits)
+  const tw = document.getElementById('r-traits');
+  tw.innerHTML = '';
+  disc.traits.forEach(tr => {
+    const p = document.createElement('div');
+    p.className = 'trait-pill';
+    p.innerHTML = `<span>${tr.i}</span>${tr.t}`;
+    tw.appendChild(p);
+  });
+  const scat = document.createElement('div');
+  scat.className = 'trait-pill';
+  scat.style.background = '#fff8e6';
+  scat.style.color = '#c05621';
+  scat.innerHTML = `<span>${style.emoji}</span>${style.name}`;
+  tw.appendChild(scat);
+
+  // 顯示代碼與學生資訊
+  document.getElementById('r-result-code').textContent = resultCode;
+  document.getElementById('r-student-info').textContent =
+    studentData.name + '　' + studentData.course + '　' + studentData.className + '　' + studentData.studentId;
+
+  // 儲存至 Google Sheets
+  saveResult();
+
+  // Show result
+  document.getElementById('screen-result').style.display = 'block';
+  showScreen('screen-result');
+}
+
+function shareResult() {
+  const combo = COMBOS[discType + '-' + styleType];
+  const disc  = DISC_ANIMALS[discType];
+  const style = LEARNING_STYLES[styleType];
+  const shareUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lookup.html?code=' + resultCode + '&quiz=learning';
+  const text = `我的 DISC × 學習風格結果是「${combo.name}」${combo.emoji}\n${disc.emoji} ${disc.name} × ${style.emoji} ${style.name}\n${combo.desc}\n\n專屬代碼：${resultCode}`;
+  if (navigator.share) {
+    navigator.share({ title:'DISC × 學習風格雙重探索', text, url: shareUrl });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text + '\n查詢連結：' + shareUrl).then(() => alert('結果已複製到剪貼簿！'));
+  }
+}
+
+function restartAll() {
+  discType = null; styleType = null; resultCode = '';
+  discScores = {D:0,I:0,S:0,C:0};
+  styleScores = { V:0, A:0, K:0, R:0 };
+  document.getElementById('screen-result').style.display = 'none';
+  // 回到路徑選擇，保留學生資料
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>

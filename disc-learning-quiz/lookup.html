@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DISC × Belbin 結果查詢</title>
+<title>DISC × 學習風格 結果查詢</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -63,6 +63,13 @@ body {
   padding: 36px 28px 28px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
+.combo-portrait-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+.combo-portrait-img {
+  width: 100%; max-width: 400px; height: auto; aspect-ratio: 654/434;
+  border-radius: 16px; display: block; object-fit: cover;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.5);
+  cursor: zoom-in;
+}
 .combo-display { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
 .disc-badge-wrap {
   width: 104px; height: 104px;
@@ -74,13 +81,15 @@ body {
 }
 .disc-result-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
 .combo-times { font-size: 2.2rem; color: rgba(255,255,255,0.5); font-weight: 200; }
-.belbin-char-img { width: 100px; height: 100px; object-fit: cover; object-position: center top; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.25); flex-shrink: 0; }
-.combo-portrait-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
-.combo-portrait-img {
-  width: 180px; height: auto; border-radius: 16px; display: block;
-  box-shadow: 0 10px 32px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.5);
-  cursor: zoom-in;
+.style-badge-wrap {
+  width: 84px; height: 84px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.22), 0 0 0 3px rgba(255,255,255,0.45);
+  flex-shrink: 0; cursor: zoom-in;
 }
+.style-badge-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 33%; }
 .zoomable { cursor: zoom-in; }
 .lightbox-overlay {
   display: none; position: fixed; inset: 0; background: rgba(10,10,25,0.9);
@@ -113,12 +122,13 @@ body {
 .disc-type-title { font-size: 1.05rem; font-weight: 900; color: #2d3748; }
 .disc-type-sub { font-size: 0.8rem; color: #718096; font-weight: 700; }
 .disc-type-desc { font-size: 0.88rem; line-height: 1.65; color: #4a5568; }
-.belbin-card { background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 16px; padding: 18px; }
-.belbin-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.belbin-mini-img { width: 52px; height: 52px; object-fit: cover; object-position: center top; border-radius: 50%; flex-shrink: 0; }
-.belbin-role-title { font-size: 1rem; font-weight: 900; color: #92400e; }
-.belbin-role-en { font-size: 0.8rem; color: #b45309; font-weight: 700; }
-.belbin-role-desc { font-size: 0.88rem; line-height: 1.65; color: #78350f; }
+.style-card { background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 16px; padding: 18px; }
+.style-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.style-mini-wrap { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(0,0,0,0.06); cursor: zoom-in; }
+.style-mini-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 33%; }
+.style-role-title { font-size: 1rem; font-weight: 900; color: #92400e; }
+.style-role-en { font-size: 0.8rem; color: #b45309; font-weight: 700; }
+.style-role-desc { font-size: 0.88rem; line-height: 1.65; color: #78350f; }
 .traits-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
 .trait-chip { display: flex; align-items: center; gap: 5px; background: #f0f4ff; border-radius: 20px; padding: 6px 12px; font-size: 0.82rem; color: #3730a3; font-weight: 700; }
 .code-section { background: linear-gradient(135deg,#1a1a5e,#3a2060); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 14px; }
@@ -133,7 +143,7 @@ body {
   <!-- 搜尋卡 -->
   <div class="search-card">
     <div class="top-nav">
-      <a href="disc_belbin_quiz.html" class="back-btn">← 回測驗主頁</a>
+      <a href="disc_learning_quiz.html" class="back-btn">← 回測驗主頁</a>
     </div>
     <div class="search-title">🔍 查詢測驗結果</div>
     <p class="search-sub" style="margin-top:4px">輸入做完測驗後拿到的 8 位英數字代碼</p>
@@ -158,13 +168,13 @@ body {
             <img class="disc-result-photo zoomable" id="r-disc-img" src="" alt="" onclick="openLightbox(this.src)">
           </div>
           <span class="combo-times">×</span>
-          <img class="belbin-char-img zoomable" id="r-belbin-img" src="" alt="" onclick="openLightbox(this.src)">
+          <div class="style-badge-wrap" id="r-style-badge"></div>
         </div>
         <div class="r-emoji" id="r-emoji"></div>
         <div class="r-combo-name" id="r-combo-name"></div>
         <div class="r-type-labels">
           <span class="r-type-label" id="r-disc-label"></span>
-          <span class="r-type-label" id="r-belbin-label"></span>
+          <span class="r-type-label" id="r-style-label"></span>
         </div>
       </div>
       <div class="result-body">
@@ -188,16 +198,16 @@ body {
           </div>
         </div>
         <div class="section">
-          <div class="section-title">👥 Belbin 團隊角色</div>
-          <div class="belbin-card">
-            <div class="belbin-card-header">
-              <img class="belbin-mini-img zoomable" id="r-belbin-mini" src="" alt="" onclick="openLightbox(this.src)">
+          <div class="section-title">🧠 學習風格</div>
+          <div class="style-card">
+            <div class="style-card-header">
+              <div class="style-mini-wrap" id="r-style-mini"></div>
               <div>
-                <div class="belbin-role-title" id="r-belbin-title"></div>
-                <div class="belbin-role-en" id="r-belbin-en"></div>
+                <div class="style-role-title" id="r-style-title"></div>
+                <div class="style-role-en" id="r-style-en"></div>
               </div>
             </div>
-            <div class="belbin-role-desc" id="r-belbin-desc"></div>
+            <div class="style-role-desc" id="r-style-desc"></div>
           </div>
         </div>
         <div class="section">
@@ -257,55 +267,34 @@ C:{ name:'貓頭鷹', emoji:'🦉', badge:'C 型 — 分析型', grad:'linear-gr
     desc:'你嚴謹細心、追求精準，是把關品質的最強守門員。你的系統性思維讓每個決策都有充分依據。' }
 };
 
-const BELBIN_ROLES = {
-SH:{ name:'推動者', en:'Shaper', cat:'行動導向', desc:'你善於挑戰現狀，在壓力下激發團隊前進。你是最願意面對困難、推動突破的那個人，即使遇到阻力也不輕易退縮。' },
-IM:{ name:'執行者', en:'Implementer', cat:'行動導向', desc:'你把計劃轉化為實際行動，是最可靠的執行力保證。你踏實、有紀律，能將混亂的想法整理成有效率的行動步驟。' },
-CF:{ name:'完成者', en:'Completer Finisher', cat:'行動導向', desc:'你注重細節，確保每件事都做到完整、精準、沒有遺漏。你的嚴謹讓團隊最終的成果達到最高標準。' },
-CO:{ name:'協調者', en:'Coordinator', cat:'人際導向', desc:'你善於傾聽所有人的觀點，協助團隊聚焦在共同目標上。你讓每個成員都能發揮所長，是凝聚力的核心。' },
-TW:{ name:'團隊工作者', en:'Teamworker', cat:'人際導向', desc:'你關注每個人的感受，在緊張時化解衝突、維繫和諧。你是讓團隊充滿溫度、互相信任的重要力量。' },
-RI:{ name:'資源探索者', en:'Resource Investigator', cat:'人際導向', desc:'你充滿好奇，善於向外探索、建立連結、引入新資源和想法。你是團隊與外界之間最重要的橋樑。' },
-PL:{ name:'創新者', en:'Plant', cat:'思維導向', desc:'你有獨特的創意思維，能在別人看不到可能性的地方找到突破口。你的點子常常出人意表，帶來真正的創新。' },
-ME:{ name:'審議者', en:'Monitor Evaluator', cat:'思維導向', desc:'你客觀、冷靜、不被情緒左右，能全面評估情況並找出最合理的方向。你的判斷是團隊避免錯誤決策的重要保障。' },
-SP:{ name:'專家', en:'Specialist', cat:'思維導向', desc:'你在特定領域有深厚的專業知識，是不可或缺的技術權威。你的專長讓團隊在關鍵時刻有依靠。' }
+const LEARNING_STYLES = {
+V:{ name:'視覺型', emoji:'👁️', en:'Visual', badge:'V 型 — 圖像學習',
+    desc:'你習慣把資訊轉換成畫面來理解，一張圖勝過千言萬語。你的筆記常常畫滿箭頭、方框和顏色，因為你的腦袋本來就用「看」的在思考。' },
+A:{ name:'聽覺型', emoji:'👂', en:'Auditory', badge:'A 型 — 聲音學習',
+    desc:'你靠「聽」和「說」來吸收知識，講出來、聽出來就記住了。安靜的閱讀對你來說沒那麼直覺，一場對話反而更有效率。' },
+K:{ name:'動手型', emoji:'✋', en:'Kinesthetic', badge:'K 型 — 實作學習',
+    desc:'你必須親自動手做過，才能真正把一件事學進去。坐著聽講對你來說很煎熬，直接下場試試看才是你最自然的學習方式。' },
+R:{ name:'讀寫型', emoji:'📝', en:'Read & Write', badge:'R 型 — 文字學習',
+    desc:'你習慣透過閱讀和書寫來消化資訊，文字對你來說最精準、最可靠。一份寫清楚的講義，比任何影片或口頭解說都讓你安心。' }
 };
 
 const COMBOS = {
-'D-SH':{ name:'衝鋒隊長', emoji:'⚡', desc:'第一個衝進去、也最後一個放棄。執行力與意志力的雙重爆發，是讓整個團隊感到「我們一定可以」的那個人。' },
-'D-IM':{ name:'鐵血征服者', emoji:'🔨', desc:'說到做到，沒有藉口。你把挑戰性目標拆解成具體步驟，然後一條一條完成——鐵的紀律，鐵的成果。' },
-'D-CF':{ name:'完美戰將', emoji:'🏹', desc:'不只是要完成，你要做到最好。高標準加上強行動力，讓你成為既追求品質又能快速交付的罕見人才。' },
-'D-CO':{ name:'征途統帥', emoji:'🎯', desc:'你掌控全局，更懂得讓每個人各歸其位。帶著壓倒性的氣場凝聚所有力量，沒有人懷疑你指的方向。' },
-'D-TW':{ name:'俠義領袖', emoji:'🦁', desc:'衝勁十足，卻也真心在乎隊友。你是那種既能帶頭衝鋒、又讓每個人都感到被守護的存在——最強的鐵漢柔情。' },
-'D-RI':{ name:'征途先鋒', emoji:'🌏', desc:'比別人更早一步踏出去探索。你把外部情報與行動力結合，永遠站在隊伍最前線打開新的可能性。' },
-'D-PL':{ name:'破局先驅', emoji:'🚀', desc:'不只是異想天開，你有能力讓革命性的想法真正落地。大膽的創意 × 無畏的衝勁，讓你的點子改變現實。' },
-'D-ME':{ name:'冷靜將軍', emoji:'⚖️', desc:'分析完畢，立刻出擊。你在別人還在猶豫時已完成評估並開始行動，冷靜的頭腦搭上老虎的速度，所向披靡。' },
-'D-SP':{ name:'鑽石戰將', emoji:'💎', desc:'在你的領域，你是最深厚的存在；在戰場上，你是最不退縮的那個人。專業 × 鬥志，讓你無可取代。' },
-'I-SH':{ name:'超凡催化劑', emoji:'✨', desc:'你用熱情讓每個人都想動起來。你把挑戰說得讓人興奮、把困難說得像冒險——你就是改變的引爆點。' },
-'I-IM':{ name:'光速行動派', emoji:'🎊', desc:'你把工作變成派對，卻同樣完成目標。充沛的活力 × 強大的執行力，讓你笑著把每件事一一完成。' },
-'I-CF':{ name:'璀璨守門人', emoji:'💫', desc:'注重每一個細節，更注重整體感受。你讓成果既精準又美麗，在品質與魅力之間找到完美的平衡點。' },
-'I-CO':{ name:'人氣盟主', emoji:'🌟', desc:'你走進房間，討論就開始聚焦。天生的連結者，讓所有人願意坐下來、說出來、一起往你指的方向走。' },
-'I-TW':{ name:'暖心明星', emoji:'🫶', desc:'人群中最閃亮，卻讓每個人都感到被看見。你的存在讓隊伍不只有效率，更有溫度和凝聚力。' },
-'I-RI':{ name:'人脈魔法師', emoji:'🗺️', desc:'你認識所有人，而且每個人都喜歡你。你把廣泛的人脈變成魔法，讓任何資源在你手中都變得唾手可得。' },
-'I-PL':{ name:'靈感煙火師', emoji:'🎨', desc:'你的點子總是讓人眼睛一亮——像煙火一樣耀眼、如此生動，讓每個人都忍不住停下來看、忍不住想參與。' },
-'I-ME':{ name:'理智魅力家', emoji:'🔮', desc:'有溫度又有深度。你在熱情感染他人的同時，也能冷靜評估情況——這種罕見的平衡讓你格外令人信服。' },
-'I-SP':{ name:'知識佈道者', emoji:'🌈', desc:'你是把專業知識變成精彩故事的人。複雜的概念在你口中變得生動有趣，讓每個人都帶走了些什麼。' },
-'S-SH':{ name:'堅毅守護者', emoji:'🌿', desc:'你不大聲宣告，但你始終在前進，始終在守護。溫和的外表下有著鋼鐵般的意志，是隊伍最穩的那股力量。' },
-'S-IM':{ name:'穩定基石', emoji:'🏠', desc:'有你在，大家知道一切都會按時完成。你是隊伍裡最可靠的那塊基石，默默撐起所有人，從不缺席。' },
-'S-CF':{ name:'品質守護神', emoji:'🛡️', desc:'沒有細節能逃過你的眼睛，也沒有人的感受你會忽略。你讓成果完整無缺，也讓整個過程充滿溫暖與安心。' },
-'S-CO':{ name:'暖心居中者', emoji:'🕊️', desc:'你不強勢，但你有辦法讓所有人坐下來、聽彼此說話。你以溫暖代替壓力，讓合作在信任中自然成形。' },
-'S-TW':{ name:'團隊心臟', emoji:'❤️', desc:'你是讓整個團隊有溫度的那個人。大家在你身邊感到安全，願意說出真實的想法，是隊伍最珍貴的存在。' },
-'S-RI':{ name:'穩健開路人', emoji:'🌱', desc:'你靜靜地走出去、靜靜地把門打開，然後帶著豐收回來。低調而可靠，是你為隊伍開拓外部世界的獨特方式。' },
-'S-PL':{ name:'靜默創造者', emoji:'🌙', desc:'你的想法常讓人驚喜——沉穩的外表下，有一顆充滿原創力的心。靜水深流，深到沒人能想像它的深度。' },
-'S-ME':{ name:'定海神針', emoji:'⚓', desc:'不被情緒捲走，不讓人感到被忽視。你以穩健的姿態看清全局，你的判斷是整個團隊最可靠的錨定點。' },
-'S-SP':{ name:'知識傳承者', emoji:'📚', desc:'你把深厚的專業知識與對人的真切關懷結合在一起。你是那種會把最重要的東西耐心傳下去的人。' },
-'C-SH':{ name:'理性革命家', emoji:'📐', desc:'你不衝動，但你敢挑戰——你用縝密的邏輯推動改變，讓每一次突破都有充分的根據和令人信服的力道。' },
-'C-IM':{ name:'系統建構師', emoji:'⚙️', desc:'你建立的流程，連你不在的時候都能正常運轉。邏輯清晰 × 執行完整，你是組織最重要的骨架與大腦。' },
-'C-CF':{ name:'品質把關王', emoji:'🔍', desc:'你是最後一道防線，也是最重要的一道。你嚴謹的眼光讓任何缺陷都無所遁形，堅守每一個標準。' },
-'C-CO':{ name:'智慧主持人', emoji:'🧭', desc:'你帶領討論不靠氣場，靠邏輯與清晰。每個決策在你手中都有充分依據，讓所有人心服口服地往前走。' },
-'C-TW':{ name:'洞察守護者', emoji:'🦉', desc:'你看見每個人、理解每個人，用深思熟慮的方式守護著整個團隊。你讓大家不只感到被支持，更感到被理解。' },
-'C-RI':{ name:'情報分析家', emoji:'🔭', desc:'你蒐集外部情報，然後系統性地分析，轉化為最有價值的洞見。你的資訊是隊伍最鋒利的決策武器。' },
-'C-PL':{ name:'科學創新者', emoji:'🧬', desc:'你的創意不是空談，而是有理論根據的突破。嚴謹的思維 × 真正的原創性，讓你的想法既大膽又可靠。' },
-'C-ME':{ name:'洞見大師', emoji:'🏆', desc:'你看得比任何人都深、都遠、都準。貓頭鷹的嚴謹加上審議者的客觀，讓你成為團隊裡最難被蒙蔽的那個人。' },
-'C-SP':{ name:'頂尖學術家', emoji:'📡', desc:'你是你領域裡最深厚的存在，而且永遠在學更多。你的專業不只是知識，是一種對卓越的永恆追求。' }
+'D-V':{ name:'戰略製圖師', emoji:'🗺️', desc:'老虎的行動力配上視覺學習，你最有效率的讀書方式，是先把重點畫成心智圖、流程圖或時間軸，讓自己在動筆寫題目之前，先在腦中建立一張清楚的「作戰地圖」。與其一頁一頁死讀課本，不如把整個章節濃縮成一張一眼就能掌握全局的圖表——看得到終點，你才會全力衝刺。準備考試時，試著把每個單元都畫成一張視覺筆記，複習時只要看圖就能快速喚醒記憶，效率會比重讀課本高上許多。' },
+'D-A':{ name:'即席指揮官', emoji:'📢', desc:'老虎的果斷配上聽覺學習，你適合用「講出來、找人辯論」的方式讀書，而不是安靜坐著硬背。把重點講一遍給同學聽、主動發起小組討論、甚至用問答的方式跟自己對話，都會比悶頭閱讀更快抓住核心。你的決斷力來自即時的來回交鋒，所以與其一個人埋頭苦讀，不如找一兩個讀書夥伴，用互相考試、辯論的方式準備，你會在對話中自然而然記住重點，也更有動力持續下去。' },
+'D-K':{ name:'實戰先鋒', emoji:'⚡', desc:'老虎的行動力配上動手實作，光看不做對你來說是最沒有效率的學習方式。與其把時間花在反覆閱讀講義，不如直接寫題目、直接動手做實驗、直接把公式套進題目裡驗證——在做的過程中犯錯、修正、再嘗試，才是你真正記得住的方式。準備考試時，建議把讀書時間分配得更偏向「練習題」而非「閱讀」，用大量實戰累積手感，你會發現這比任何講解都更快讓你抓住訣竅。' },
+'D-R':{ name:'戰術策劃者', emoji:'📋', desc:'老虎的目標導向配上讀寫學習，你適合把讀書計畫寫成清單、把重點條列成一步一步的步驟，用文字替你天生的衝勁裝上導航系統，讓每一次全力衝刺之前，都清楚知道下一步該做什麼、還剩下多少進度。建議你養成寫「讀書計畫表」和「重點條列筆記」的習慣，把大目標拆解成一個個可以打勾完成的小任務——這樣不只讓行動更精準，也會讓你在衝刺的過程中持續看到自己的進度，更有成就感。' },
+'I-V':{ name:'畫面魔術師', emoji:'🎨', desc:'孔雀的熱情配上視覺學習，你適合用色彩、圖卡、心智圖來整理筆記，把知識變成一張張有畫面感的圖像。單調的黑白文字很難留住你的注意力，但只要加上顏色、插畫、標籤，讀書對你來說就會變得像在創作一樣有趣。試著用不同顏色的筆標記不同類型的重點、把長篇文字濃縮成圖解，甚至畫成一張張小卡片——因為好玩，你會更願意一讀再讀，記憶也自然更深刻。' },
+'I-A':{ name:'金牌主持人', emoji:'🎤', desc:'孔雀的表達力配上聽覺學習，你最強的讀書方式就是「講給別人聽」。把課本內容用自己的話重新講一遍、找同學互相考問、甚至錄音下來自己回放，都會比安靜看書更有效率。你天生善於用聲音和語氣感染人，所以不妨把複習變成一場小型分享會——約幾個同學一起讀書，輪流當「小老師」講解單元重點，你會在教別人的過程中，把知識講得越來越熟練、記得越來越牢。' },
+'I-K':{ name:'派對行動家', emoji:'🎉', desc:'孔雀的活力配上動手實作，你適合把讀書變成一場有互動的活動，而不是安靜坐在書桌前。用角色扮演重現歷史事件、動手做實驗驗證理論、跟同學來一場搶答競賽——只要能讓身體和情緒都參與進來，你就能學得又快又開心。試著把枯燥的複習內容設計成小遊戲或挑戰賽，動起來、玩起來的你，才會真正把知識吸收進去，而且記得特別久。' },
+'I-R':{ name:'文字暖心人', emoji:'💌', desc:'孔雀的感染力配上讀寫學習，你適合把學到的東西寫成自己的心得、故事或日記，用你擅長的文字重新詮釋課本內容，把冷冰冰的知識轉化成有溫度、有個人風格的句子——寫下來的過程，會幫你把當下的感受和理解，真正轉化成留在腦中的記憶。建議準備一本「學習心得本」，每讀完一個單元就寫幾句自己的話總結，這樣不只加深印象，也會讓讀書變成一件更有意義的事。' },
+'S-V':{ name:'安靜觀察家', emoji:'🌿', desc:'無尾熊的穩定配上視覺學習，你適合用固定的圖表和架構，慢慢建立起完整而扎實的理解。不用急著一次記住所有東西，把資訊整理成清楚的視覺架構圖，讓知識像拼圖一樣一塊一塊慢慢拼上去，你會讀得更安心，記得也更持久。建議你為每個科目建立一套固定格式的筆記系統，用同樣的顏色和排版整理重點——熟悉的架構會讓你在複習時特別有安全感，也更容易靜下心來專注。' },
+'S-A':{ name:'溫柔傾聽者', emoji:'👂', desc:'無尾熊的耐心配上聽覺學習，你適合用聽課、聽錄音、跟人小聲討論的方式吸收知識，不需要求快。反覆聽個幾遍、讓資訊慢慢沉澱，會比逼自己一次就要記住更符合你的步調。你善於傾聽也善於消化，所以不妨把課堂錄音或線上課程存下來，通勤或睡前反覆聽——安靜地、一遍一遍地聽，知識會在不知不覺中內化成你自己的東西，這種細水長流的方式最適合你。' },
+'S-K':{ name:'踏實實踐家', emoji:'🌱', desc:'無尾熊的踏實配上動手實作，你適合透過反覆練習來慢慢建立信心，而不是臨時抱佛腳。同一種題型多做幾次、同一個流程多走幾遍，讓身體記住節奏，會比考前一口氣硬塞知識更符合你穩紮穩打的個性。建議把讀書計畫拉長、分成每天固定的小份量，每天穩定地練習一點，日積月累下來，你會發現自己在不知不覺中已經累積了扎實的實力，而且記得特別牢固、不容易忘記。' },
+'S-R':{ name:'筆記守護者', emoji:'📔', desc:'無尾熊的穩定配上讀寫學習，你適合把筆記整理得清清楚楚，並且反覆閱讀、反覆確認。一份完整可靠的筆記會是你最安心的讀書夥伴，讀一次、記一次，慢慢累積就是你最扎實的實力。建議你養成每天固定時間整理筆記的習慣，把當天學到的東西用自己的話寫下來、分類歸檔——這樣不只讓知識更有系統，回頭複習時，翻開筆記本的那份安心感，也會讓你讀書讀得更踏實。' },
+'C-V':{ name:'系統圖解師', emoji:'📐', desc:'貓頭鷹的邏輯配上視覺學習，你適合把複雜的知識拆解成圖表、流程圖或架構圖，用結構化的畫面理解每個環節之間的因果關係。純文字的敘述對你來說常常不夠精準，但只要畫成圖，邏輯關係就會一目了然。建議你在讀書時養成「畫圖釐清邏輯」的習慣——遇到複雜的概念，先動手畫出它的架構和因果鏈，你會發現自己理解得比死記硬背更深入，也更能舉一反三。' },
+'C-A':{ name:'深度聆聽者', emoji:'🎧', desc:'貓頭鷹的分析力配上聽覺學習，你適合聽講座、聽 Podcast、參與深度討論，從話語中抓出邏輯和細節。你擅長一邊聽一邊在腦中分析、拆解、歸納，這種「用聽來分析」的方式，有時候反而會比自己埋頭閱讀更有效率。建議你多利用零碎時間聽相關主題的深度內容，並養成邊聽邊做筆記整理重點的習慣——聽完之後試著用自己的邏輯重新講一遍，會幫你把資訊消化得更透徹。' },
+'C-K':{ name:'實驗研究員', emoji:'🔬', desc:'貓頭鷹的嚴謹配上動手實作，你適合用實驗、驗證的方式來確認自己是否真的理解。親自動手測試假設、反覆操作確認結果，比起單純閱讀理論，實際做過一次更能說服你自己「真的懂了」。建議你在讀書時多為自己設計一些小驗證——例如自己出題目考自己、動手重現一次解題過程——這種親自驗證的習慣，會讓你的理解更加扎實可靠，也更經得起考試時的推敲。' },
+'C-R':{ name:'文字考據家', emoji:'📖', desc:'貓頭鷹的專業配上讀寫學習，你是天生適合精讀的人。逐字逐句閱讀、動手寫筆記、做系統性的整理歸納，文字對你來說最精準可靠，也是你建立扎實知識最好用的工具。建議你為每個重要主題建立一份詳細的整理筆記，標註出處、來龍去脈和關鍵細節——這種嚴謹考據的讀書方式雖然花時間，但會讓你的知識體系特別穩固，也最經得起深入追問。' }
 };
 
 function lookup() {
@@ -333,7 +322,7 @@ function lookup() {
     renderResult(data);
   };
   const s = document.createElement('script');
-  s.src = APPS_SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&quiz=belbin&callback=' + cbName;
+  s.src = APPS_SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&quiz=learning&callback=' + cbName;
   s.onerror = function() {
     delete window[cbName];
     statusEl.textContent = '查詢失敗，請稍後再試。';
@@ -354,11 +343,11 @@ function renderResult(data) {
     return;
   }
 
-  const disc   = DISC_ANIMALS[data.discType];
-  const belbin = BELBIN_ROLES[data.belbinRole];
-  const combo  = COMBOS[data.discType + '-' + data.belbinRole];
+  const disc  = DISC_ANIMALS[data.discType];
+  const style = LEARNING_STYLES[data.styleType];
+  const combo = COMBOS[data.discType + '-' + data.styleType];
 
-  if (!disc || !belbin || !combo) {
+  if (!disc || !style || !combo) {
     statusEl.textContent = '資料格式有誤，請聯絡老師。';
     statusEl.classList.add('error');
     statusEl.style.display = 'block';
@@ -366,28 +355,28 @@ function renderResult(data) {
   }
 
   const animalSrc = { D:'disc-d.webp', I:'disc-i.webp', S:'disc-s.webp', C:'disc-c.webp' };
-  const belbinSrc = 'belbin-chars/' + data.belbinRole + '.webp';
+  const styleSrc  = { V:'style-V.webp', A:'style-A.webp', K:'style-K.webp', R:'style-R.webp' };
 
   document.getElementById('r-header').style.background = disc.grad;
-  document.getElementById('r-disc-img').src   = animalSrc[data.discType];
-  document.getElementById('r-disc-mini').src  = animalSrc[data.discType];
-  document.getElementById('r-belbin-img').src  = belbinSrc;
-  document.getElementById('r-belbin-mini').src = belbinSrc;
-  document.getElementById('r-combo-img').src   = 'combo-images/' + data.discType + '-' + data.belbinRole + '.webp';
+  document.getElementById('r-disc-img').src  = animalSrc[data.discType];
+  document.getElementById('r-disc-mini').src = animalSrc[data.discType];
+  document.getElementById('r-style-badge').innerHTML = `<img src="${styleSrc[data.styleType]}" alt="" onclick="openLightbox(this.src)">`;
+  document.getElementById('r-style-mini').innerHTML  = `<img src="${styleSrc[data.styleType]}" alt="" onclick="openLightbox(this.src)">`;
+  document.getElementById('r-combo-img').src = 'combo-images/' + data.discType + '-' + data.styleType + '.webp';
 
   document.getElementById('r-emoji').textContent      = combo.emoji;
   document.getElementById('r-combo-name').textContent = combo.name;
-  document.getElementById('r-disc-label').textContent   = disc.emoji + ' ' + disc.badge;
-  document.getElementById('r-belbin-label').textContent = belbin.name + '（' + belbin.en + '）';
+  document.getElementById('r-disc-label').textContent  = disc.emoji + ' ' + disc.badge;
+  document.getElementById('r-style-label').textContent = style.emoji + ' ' + style.name;
   document.getElementById('r-combo-desc').textContent  = combo.desc;
 
   document.getElementById('r-disc-title').textContent = disc.emoji + ' ' + disc.name;
   document.getElementById('r-disc-sub').textContent   = disc.badge;
   document.getElementById('r-disc-desc').textContent  = disc.line + ' ' + disc.desc;
 
-  document.getElementById('r-belbin-title').textContent = belbin.name;
-  document.getElementById('r-belbin-en').textContent    = belbin.en + ' ｜ ' + belbin.cat;
-  document.getElementById('r-belbin-desc').textContent  = belbin.desc;
+  document.getElementById('r-style-title').textContent = style.name;
+  document.getElementById('r-style-en').textContent    = style.en + ' ｜ ' + style.badge;
+  document.getElementById('r-style-desc').textContent  = style.desc;
 
   const tw = document.getElementById('r-traits');
   tw.innerHTML = '';
@@ -397,11 +386,11 @@ function renderResult(data) {
     chip.textContent = tr.i + ' ' + tr.t;
     tw.appendChild(chip);
   });
-  const bChip = document.createElement('span');
-  bChip.className = 'trait-chip';
-  bChip.style.cssText = 'background:#fffbeb;color:#c05621;border:1.5px solid #fde68a';
-  bChip.textContent = '👥 ' + belbin.cat;
-  tw.appendChild(bChip);
+  const sChip = document.createElement('span');
+  sChip.className = 'trait-chip';
+  sChip.style.cssText = 'background:#fffbeb;color:#c05621;border:1.5px solid #fde68a';
+  sChip.textContent = style.emoji + ' ' + style.name;
+  tw.appendChild(sChip);
 
   document.getElementById('r-code').textContent = data.code;
   document.getElementById('r-info').innerHTML =
